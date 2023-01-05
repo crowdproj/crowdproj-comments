@@ -1,9 +1,9 @@
 rootProject.name = "crowdproj-comments"
 
 pluginManagement {
-    val kotlinJvmVersion : String by settings
+    val kotlinVersion : String by settings
     plugins {
-        kotlin("jvm") version kotlinJvmVersion
+        kotlin("jvm") version kotlinVersion
     }
 }
 
