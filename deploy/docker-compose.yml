@@ -1,0 +1,92 @@
+# Минимальная версия инфраструктуры на базе
+# Fluent Bit - осуществляет сбор, обработку и пересылку в хранилище лог-сообщений.
+# OpenSearch - централизованно хранит лог-сообщения, обеспечивает их быстрый поиск и фильтрацию.
+# OpenSearch Dashboards - предоставляет интерфейс пользователю, для визуализации данных хранимых в opensearch
+
+version: "3"
+services:
+
+  app:
+    container_name: app
+    image: nginx
+    ports:
+      - 8080:80
+    volumes:
+      # добавляем конфигурацию в контейнер
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+    depends_on:
+      - fluent-bit
+    logging:
+      # используемый драйвер логгирования
+      driver: "fluentd"
+      options:
+        # куда посылать лог-сообщения
+        # необходимо чтобы адрес совпадал с настройками плагина forward
+        fluentd-address: localhost:24224
+        # теги используются для маршрутизации лог-сообщений
+        tag: app.logs
+    networks:
+      - opensearch
+
+  fluent-bit:
+    container_name: fluent-bit
+    image: fluent/fluent-bit
+    ports:
+      # необходимо открыть порты, которые используются плагином forward
+      - 24224:24224
+      - 24224:24224/udp
+      - 2020:2020
+    environment:
+      - opensearch_host=opensearch
+      - opensearch_user=admin
+      - opensearch_pass=admin
+    volumes:
+      # добавляем конфигурацию в контейнер
+      - ./fluent-bit/fluent-bit.conf:/fluent-bit/etc/fluent-bit.conf
+      - ./fluent-bit/parsers.conf:/fluent-bit/etc/parsers.conf
+    networks:
+      - opensearch
+
+  opensearch:
+    container_name: opensearch
+    image: opensearchproject/opensearch:latest
+    environment:
+      - discovery.type=single-node
+      - http.port=9200
+      - bootstrap.memory_lock=true
+      - ES_JAVA_OPTS=-Xms512m -Xmx512m
+    ports:
+      - "9200:9200"
+      - "9600:9600"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+      nofile:
+        soft: 65536
+        hard: 65536
+    volumes:
+      - opensearch-data:/usr/share/opensearch/data
+    networks:
+      - opensearch
+
+  dashboards:
+    image: opensearchproject/opensearch-dashboards:latest
+    container_name: opensearch-dashboards
+    ports:
+      - 5601:5601
+    expose:
+      - "5601"
+    environment:
+      OPENSEARCH_HOSTS: '["https://opensearch:9200"]'
+    depends_on:
+      - opensearch
+    networks:
+      - opensearch
+
+volumes:
+  opensearch-data:
+
+networks:
+  opensearch:
+    driver: bridge
