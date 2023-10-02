@@ -1,0 +1,253 @@
+openapi: 3.0.4
+info:
+  title: crowdproj-comments
+  description: Microservice for managing comments feature for any object (article, product, news, etc.)
+  contact:
+    email: soulofpain.k@gmail.com
+  license:
+    name: Apache 2.0
+    url: 'https://www.apache.org/licenses/LICENSE-2.0.html'
+  version: 1.0.0
+paths:
+  /comments/create:
+    post:
+      tags:
+        - comment
+      summary: Create a comment
+      operationId: commentCreate
+      requestBody:
+        description: Request body
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CommentCreateRequest'
+        required: true
+      responses:
+        200:
+          description: Success response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CommentCreateRequest'
+
+components:
+#-------------------------------
+# Reusable schemas (data models)
+#-------------------------------
+  schemas:
+    ICommentRequest:
+      allOf:
+        - $ref: './base.yaml#/components/schemas/IRequest'
+        - type: object
+          discriminator:
+            propertyName: requestType
+            mapping:
+              create: '#/components/schemas/CommentCreateRequest'
+              read: '#/components/schemas/CommentReadRequest'
+              update: '#/components/schemas/CommentUpdateRequest'
+              delete: '#/components/schemas/CommentDeleteRequest'
+              search: '#/components/schemas/CommentSearchRequest'
+
+    ICommentResponse:
+      allOf:
+        - $ref: './base.yaml#/components/schemas/IResponse'
+        - type: object
+          discriminator:
+            propertyName: responseType
+            mapping:
+              create: '#/components/schemas/CommentCreateResponse'
+              read: '#/components/schemas/CommentReadResponse'
+              update: '#/components/schemas/CommentUpdateResponse'
+              delete: '#/components/schemas/CommentDeleteResponse'
+              search: '#/components/schemas/CommentSearchResponse'
+
+    Error:
+      $ref: './base.yaml#/components/schemas/Error'
+
+    RequestId:
+      $ref: './base.yaml#/components/schemas/RequestId'
+
+    ResponseResult:
+      $ref: './base.yaml#/components/schemas/ResponseResult'
+
+    RequestDebug:
+      $ref: './base.yaml#/components/schemas/CpRequestDebug'
+
+    CommentId: # Can be referenced as '#components/schemas/ContentId'
+      type: string
+      description: Comment identifier
+      example: "12332221"
+
+    ObjectType: # Can be referenced as '#components/schemas/ObjectType'
+      type: string
+      description: Object type comment referred to
+      example: "ad"
+
+    ObjectId: # Can be referenced as '#components/schemas/ObjectId'
+      type: string
+      description: Object identifier comment referred to
+      example: "12321"
+
+    UserId: # Can be referenced as '#/components/schemas/UserId'
+      $ref: './base.yaml#/components/schemas/UserId'
+
+
+    CommentLock: # Can be referenced as '#components/schemas/CommentLock'
+      type: string
+      description: Comment optimistic lock version
+
+    BaseComment: # Can be referenced as '#components/schemas/BaseComment'
+      type: object
+      description: The base object
+      properties:
+        objectType:
+          $ref: '#/components/schemas/ObjectType'
+        objectId:
+          $ref: '#/components/schemas/ObjectId'
+        userId:
+          $ref: '#/components/schemas/UserId'
+        content:
+          type: object
+          description: The comment content
+          example: "This is a comment"
+        contentType:
+          type: string
+          description: The content type
+          example: "text"
+
+    CommentCreateObject: # Can be referenced as '#components/schemas/CommentCreateObject'
+      allOf:
+        - $ref: '#/components/schemas/BaseComment'
+
+    CommentUpdateObject: # Can be referenced as '#components/schemas/CommentUpdateObject'
+      allOf:
+        - $ref: '#/components/schemas/BaseComment'
+        - type: object
+          properties:
+            id:
+              $ref: '#/components/schemas/CommentId'
+            lock:
+              $ref: '#/components/schemas/CommentLock'
+
+    CommentCreateRequest: # Can be referenced as '#components/schemas/CommentCreateRequest'
+      allOf:
+        - $ref: '#/components/schemas/ICommentRequest'
+        - $ref: '#/components/schemas/RequestDebug'
+        - type: object
+          properties:
+            comment:
+              $ref: '#/components/schemas/CommentCreateObject'
+
+    CommentUpdateRequest: # Can be referenced as '#components/schemas/CommentUpdateRequest'
+      allOf:
+        - $ref: '#/components/schemas/ICommentRequest'
+        - $ref: '#/components/schemas/RequestDebug'
+        - type: object
+          properties:
+            comment:
+              $ref: '#/components/schemas/CommentUpdateObject'
+
+    CommentReadRequest: # Can be referenced as '#components/schemas/CommentReadRequest'
+      allOf:
+        - $ref: '#/components/schemas/ICommentRequest'
+        - $ref: '#/components/schemas/RequestDebug'
+        - type: object
+          properties:
+            commentsIds:
+              type: array
+              items:
+                $ref: '#/components/schemas/CommentId'
+
+    CommentDeleteRequest: # Can be referenced as '#components/schemas/CommentDeleteRequest'
+      allOf:
+        - $ref: '#/components/schemas/ICommentRequest'
+        - $ref: '#/components/schemas/RequestDebug'
+        - type: object
+          properties:
+            commentId:
+              $ref: '#/components/schemas/CommentId'
+            lock:
+              $ref: '#/components/schemas/CommentLock'
+
+    CommentSearchFilter: # Can be referenced as '#components/schemas/CommentSearchFilter'
+      type: object
+      description: Filters for comments search
+      properties:
+        objectType:
+          $ref: '#/components/schemas/ObjectType'
+        objectId:
+          $ref: '#/components/schemas/ObjectId'
+        userId:
+          $ref: '#/components/schemas/UserId'
+
+    CommentSearchRequest: # Can be referenced as '#components/schemas/CommentSearchRequest'
+      allOf:
+        - $ref: '#/components/schemas/ICommentRequest'
+        - $ref: '#/components/schemas/RequestDebug'
+        - type: object
+          properties:
+            CommentFilter:
+              $ref: '#/components/schemas/CommentSearchFilter'
+
+    CommentResponseObject:
+      allOf:
+        - type: object
+          description: An object that returned in the response
+          properties:
+            id:
+              $ref: '#/components/schemas/CommentId'
+            createdAt:
+              type: string
+              format: date-time
+              description: A comment date and time created
+            updatedAt:
+              type: string
+              format: date-time
+              description: A comment date and time updated
+            lock:
+              $ref: '#/components/schemas/CommentLock'
+        - $ref: '#/components/schemas/BaseComment'
+
+    CommentResponseSingle:
+      allOf:
+        - type: object
+          description: A response with one comment
+          properties:
+            comment:
+              $ref: '#/components/schemas/CommentResponseObject'
+
+    CommentResponseMultiple:
+      allOf:
+        - type: object
+          description: A response with multiple comments
+          properties:
+            comments:
+              type: array
+              items:
+                $ref: '#/components/schemas/CommentResponseObject'
+
+    CommentCreateResponse:
+      allOf:
+        - $ref: '#/components/schemas/ICommentResponse'
+        - $ref: '#/components/schemas/CommentResponseSingle'
+
+    CommentReadResponse: # Can be referenced as '#/components/schemas/RatingReadResponse'
+      allOf:
+        - $ref: '#/components/schemas/ICommentResponse'
+        - $ref: '#/components/schemas/CommentResponseSingle'
+
+    CommentUpdateResponse: # Can be referenced as '#/components/schemas/RatingUpdateResponse'
+      allOf:
+        - $ref: '#/components/schemas/ICommentResponse'
+        - $ref: '#/components/schemas/CommentResponseSingle'
+
+    CommentDeleteResponse: # Can be referenced as '#/components/schemas/RatingDeleteResponse'
+      allOf:
+        - $ref: '#/components/schemas/ICommentResponse'
+        - $ref: '#/components/schemas/CommentResponseSingle'
+
+    CommentSearchResponse: # Can be referenced as '#/components/schemas/RatingSearchResponse'
+      allOf:
+        - $ref: '#/components/schemas/ICommentResponse'
+        - $ref: '#/components/schemas/CommentResponseMultiple'
+
