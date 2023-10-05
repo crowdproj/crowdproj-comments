@@ -68,9 +68,15 @@ val getSpecs: Task by tasks.creating {
         }
     }
 }
+openApiValidate {
+    inputSpec.set(layout.buildDirectory.file("spec-comments-$apiVersion.yaml").map { it.asFile.path })
+}
 
 tasks {
     this.openApiGenerate {
+        dependsOn(getSpecs)
+    }
+    this.openApiValidate {
         dependsOn(getSpecs)
     }
 }
