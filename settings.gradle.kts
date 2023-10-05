@@ -15,3 +15,4 @@ pluginManagement {
 
 include("comments-api-v1")
 include("comments-common")
+include("comments-mappers-v1")

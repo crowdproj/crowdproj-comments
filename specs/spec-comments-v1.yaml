@@ -13,7 +13,7 @@ paths:
     post:
       tags:
         - comment
-      summary: Create a comment
+      summary: Create comment
       operationId: commentCreate
       requestBody:
         description: Request body
@@ -29,6 +29,91 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/CommentCreateRequest'
+
+  /comments/read:
+    post:
+      tags:
+        - comment
+      summary: Read comment
+      operationId: commentRead
+      requestBody:
+        description: Request body
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CommentReadRequest'
+        required: true
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CommentReadResponse'
+
+  /comments/update:
+    post:
+      tags:
+        - comment
+      summary: Update comment
+      operationId: commentUpdate
+      requestBody:
+        description: Request body
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CommentUpdateRequest'
+        required: true
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CommentUpdateResponse'
+
+  /comments/delete:
+    post:
+      tags:
+        - comment
+      summary: Delete comment
+      operationId: commentUpdate
+      requestBody:
+        description: Request body
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CommentDeleteRequest'
+        required: true
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CommentDeleteResponse'
+
+  /comments/search:
+    post:
+      tags:
+        - comment
+      summary: Search comment
+      operationId: commentUpdate
+      requestBody:
+        description: Request body
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CommentSearchRequest'
+        required: true
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CommentSearchResponse'
+
 
 components:
 #-------------------------------
