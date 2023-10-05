@@ -12,6 +12,7 @@ data class Comment (
     var contentType:CommentContentType  = CommentContentType.NONE,
     var createdAt: Instant = Instant.NONE,
     var updatedAt: Instant = Instant.NONE,
+    var lock: CommentLock = CommentLock.NONE
     ){
     companion object {
         val NONE = Comment()

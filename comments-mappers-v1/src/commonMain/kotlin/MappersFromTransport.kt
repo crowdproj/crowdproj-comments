@@ -1,10 +1,20 @@
 import com.crowdproj.comments.common.CommentContext
-import com.crowdproj.comments.common.exceptions.UnknownRequestException
+import exceptions.UnknownRequestException
 import com.crowdproj.comments.common.models.*
 import com.crowdproj.comments.common.stubs.CommentStubs
 import com.crowdproj.product.comments.api.v1.models.*
 
 fun CommentContext.fromTransport(request: IRequest) = when (request) {
+    is ICommentRequest -> {
+        workMode = request.debug.transportToWorkMode()
+        stubCase = request.debug.transportToStubCase()
+        fromTransport(request)
+    }
+
+    else -> throw UnknownRequestException(request::class)
+}
+
+fun CommentContext.fromTransport(request: ICommentRequest) = when (request) {
     is CommentCreateRequest -> fromTransport(request)
     is CommentUpdateRequest -> fromTransport(request)
     is CommentDeleteRequest -> fromTransport(request)
@@ -15,40 +25,29 @@ fun CommentContext.fromTransport(request: IRequest) = when (request) {
 
 fun CommentContext.fromTransport(request: CommentCreateRequest) {
     command = CommentCommand.CREATE
-    requestId = request.requestId()
     commentRequest = request.comment?.toInternal() ?: Comment()
-    workMode = request.debug.transportToWorkMode()
-    stubCase = request.debug.transportToStubCase()
 }
 
-fun CommentContext.fromTransport(request: CommentUpdateRequest){
-    command = CommentCommand.UPDATE
-    requestId = request.requestId()
-    commentRequest = request.comment?.toInternal() ?: Comment()
-    workMode = request.debug.transportToWorkMode()
-    stubCase = request.debug.transportToStubCase()
-}
-
-fun CommentContext.fromTransport(request: CommentSearchRequest){
-    command = CommentCommand.SEARCH
-    requestId = request.requestId()
-    commentFilterRequest = request.commentFilter?.toInternal() ?: CommentFilter.NONE
-}
-
-fun CommentContext.fromTransport(request: CommentDeleteRequest){
-    command = CommentCommand.DELETE
-    requestId = request.requestId()
-    commentRequest = request.commentId.toCommentWithId()
-    workMode = request.debug.transportToWorkMode()
-    stubCase = request.debug.transportToStubCase()
-}
-
-fun CommentContext.fromTransport(request: CommentReadRequest){
+fun CommentContext.fromTransport(request: CommentReadRequest) {
     command = CommentCommand.READ
-    requestId = request.requestId()
-    request.commentsIds?.forEach { commentsRequest.add(it.toCommentWithId()) }
-    workMode = request.debug.transportToWorkMode()
-    stubCase = request.debug.transportToStubCase()
+    request.commentsIds.toCommentsWithId()
+}
+
+fun CommentContext.fromTransport(request: CommentUpdateRequest) {
+    command = CommentCommand.UPDATE
+    commentRequest = request.comment?.toInternal() ?: Comment()
+}
+
+fun CommentContext.fromTransport(request: CommentDeleteRequest) {
+    command = CommentCommand.DELETE
+    commentRequest = request.commentId.toCommentWithId().also {
+        it.lock = request.lock.toCommentLock()
+    }
+}
+
+fun CommentContext.fromTransport(request: CommentSearchRequest) {
+    command = CommentCommand.SEARCH
+    commentFilterRequest = request.commentFilter?.toInternal() ?: CommentFilter.NONE
 }
 
 
@@ -67,7 +66,8 @@ private fun CommentUpdateObject.toInternal(): Comment = Comment(
     objectId = this.objectId.toCommentObjectId(),
     userId = this.userId.toUserId(),
     content = this.content ?: "",
-    contentType = this.contentType.toInternal()
+    contentType = this.contentType.toInternal(),
+    lock = this.lock.toCommentLock()
 )
 
 fun CommentSearchFilter.toInternal(): CommentFilter = CommentFilter(
@@ -84,13 +84,16 @@ private fun String?.toUserId() = this?.let { CommentUserId(it) } ?: CommentUserI
 
 private fun String?.toCommentWithId() = Comment(id = this.toCommentId())
 
-private fun ObjectType?.toInternal() = when (this){
+private fun String?.toCommentLock() = this?.let { CommentLock(it) } ?: CommentLock.NONE
+
+private fun List<String>?.toCommentsWithId() = this?.map { it.toCommentWithId() }
+
+private fun ObjectType?.toInternal() = when (this) {
     ObjectType.COMMENT -> CommentObjectType.COMMENT
     ObjectType.PRODUCT -> CommentObjectType.PRODUCT
     ObjectType.AD -> CommentObjectType.AD
     else -> CommentObjectType.NONE
 }
-private fun ICommentRequest?.requestId() = this?.requestId?.let{ CommentRequestId(it)} ?: CommentRequestId.NONE
 
 private fun CpBaseDebug?.transportToWorkMode(): CommentWorkMode = when (this?.mode) {
     CpRequestDebugMode.PROD -> CommentWorkMode.PROD
@@ -106,7 +109,7 @@ private fun CpBaseDebug?.transportToStubCase(): CommentStubs = when (this?.stub)
     null -> CommentStubs.NONE
 }
 
-private fun ContentType?.toInternal() = when(this) {
+private fun ContentType?.toInternal() = when (this) {
     ContentType.PLAIN -> CommentContentType.PLAIN
     ContentType.HTML -> CommentContentType.HTML
     ContentType.JSON -> CommentContentType.JSON

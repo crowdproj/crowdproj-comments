@@ -8,6 +8,13 @@ info:
     name: Apache 2.0
     url: 'https://www.apache.org/licenses/LICENSE-2.0.html'
   version: 1.0.0
+servers:
+  - url: http://localhost:8080
+tags:
+  - name: comment
+    description: support of comments microservice
+
+
 paths:
   /comments/create:
     post:
@@ -28,7 +35,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/CommentCreateRequest'
+                $ref: '#/components/schemas/CommentCreateResponse'
 
   /comments/read:
     post:
@@ -116,18 +123,14 @@ paths:
 
 
 components:
-#-------------------------------
-# Reusable schemas (data models)
-#-------------------------------
+  #-------------------------------
+  # Reusable schemas (data models)
+  #-------------------------------
   schemas:
     ICommentRequest:
       allOf:
         - $ref: './base.yaml#/components/schemas/IRequest'
-        - type: object
-          properties:
-            requestId:
-              type: string
-              description: A request ID for debugging purposes
+        - $ref: './base.yaml#/components/schemas/CpRequestDebug'
         - type: object
           discriminator:
             propertyName: requestType
@@ -137,6 +140,7 @@ components:
               update: '#/components/schemas/CommentUpdateRequest'
               delete: '#/components/schemas/CommentDeleteRequest'
               search: '#/components/schemas/CommentSearchRequest'
+
 
     ICommentResponse:
       allOf:
@@ -159,9 +163,6 @@ components:
 
     ResponseResult:
       $ref: './base.yaml#/components/schemas/ResponseResult'
-
-    RequestDebug:
-      $ref: './base.yaml#/components/schemas/CpRequestDebug'
 
     CommentId: # Can be referenced as '#components/schemas/ContentId'
       type: string
@@ -233,7 +234,6 @@ components:
     CommentCreateRequest: # Can be referenced as '#components/schemas/CommentCreateRequest'
       allOf:
         - $ref: '#/components/schemas/ICommentRequest'
-        - $ref: '#/components/schemas/RequestDebug'
         - type: object
           properties:
             comment:
@@ -242,16 +242,16 @@ components:
     CommentUpdateRequest: # Can be referenced as '#components/schemas/CommentUpdateRequest'
       allOf:
         - $ref: '#/components/schemas/ICommentRequest'
-        - $ref: '#/components/schemas/RequestDebug'
         - type: object
           properties:
             comment:
               $ref: '#/components/schemas/CommentUpdateObject'
+            lock:
+              $ref: '#/components/schemas/CommentLock'
 
     CommentReadRequest: # Can be referenced as '#components/schemas/CommentReadRequest'
       allOf:
         - $ref: '#/components/schemas/ICommentRequest'
-        - $ref: '#/components/schemas/RequestDebug'
         - type: object
           properties:
             commentsIds:
@@ -262,7 +262,6 @@ components:
     CommentDeleteRequest: # Can be referenced as '#components/schemas/CommentDeleteRequest'
       allOf:
         - $ref: '#/components/schemas/ICommentRequest'
-        - $ref: '#/components/schemas/RequestDebug'
         - type: object
           properties:
             commentId:
@@ -284,14 +283,14 @@ components:
     CommentSearchRequest: # Can be referenced as '#components/schemas/CommentSearchRequest'
       allOf:
         - $ref: '#/components/schemas/ICommentRequest'
-        - $ref: '#/components/schemas/RequestDebug'
         - type: object
           properties:
-            CommentFilter:
+            commentFilter:
               $ref: '#/components/schemas/CommentSearchFilter'
 
     CommentResponseObject:
       allOf:
+        - $ref: '#/components/schemas/BaseComment'
         - type: object
           description: An object that returned in the response
           properties:
@@ -307,7 +306,6 @@ components:
               description: A comment date and time updated
             lock:
               $ref: '#/components/schemas/CommentLock'
-        - $ref: '#/components/schemas/BaseComment'
 
     CommentResponseSingle:
       allOf:
@@ -335,7 +333,7 @@ components:
     CommentReadResponse: # Can be referenced as '#/components/schemas/RatingReadResponse'
       allOf:
         - $ref: '#/components/schemas/ICommentResponse'
-        - $ref: '#/components/schemas/CommentResponseSingle'
+        - $ref: '#/components/schemas/CommentResponseMultiple'
 
     CommentUpdateResponse: # Can be referenced as '#/components/schemas/RatingUpdateResponse'
       allOf:

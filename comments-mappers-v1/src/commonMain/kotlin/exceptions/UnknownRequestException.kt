@@ -1,4 +1,4 @@
-package com.crowdproj.comments.common.exceptions
+package exceptions
 
 import kotlin.reflect.KClass
 
