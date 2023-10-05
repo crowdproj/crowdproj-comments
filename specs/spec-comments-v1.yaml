@@ -77,7 +77,7 @@ paths:
       tags:
         - comment
       summary: Delete comment
-      operationId: commentUpdate
+      operationId: commentDelete
       requestBody:
         description: Request body
         content:
@@ -98,7 +98,7 @@ paths:
       tags:
         - comment
       summary: Search comment
-      operationId: commentUpdate
+      operationId: commentSearch
       requestBody:
         description: Request body
         content:
@@ -123,6 +123,11 @@ components:
     ICommentRequest:
       allOf:
         - $ref: './base.yaml#/components/schemas/IRequest'
+        - type: object
+          properties:
+            requestId:
+              type: string
+              description: A request ID for debugging purposes
         - type: object
           discriminator:
             propertyName: requestType
@@ -166,6 +171,10 @@ components:
     ObjectType: # Can be referenced as '#components/schemas/ObjectType'
       type: string
       description: Object type comment referred to
+      enum:
+        - 'comment'
+        - 'product'
+        - 'ad'
       example: "ad"
 
     ObjectId: # Can be referenced as '#components/schemas/ObjectId'
@@ -176,6 +185,15 @@ components:
     UserId: # Can be referenced as '#/components/schemas/UserId'
       $ref: './base.yaml#/components/schemas/UserId'
 
+    ContentType: # Can be referenced as '#/components/schemas/Content'
+      type: string
+      description: The content type
+      enum:
+        - "plain"
+        - "html"
+        - "json"
+      example:
+        "plain"
 
     CommentLock: # Can be referenced as '#components/schemas/CommentLock'
       type: string
@@ -196,9 +214,7 @@ components:
           description: The comment content
           example: "This is a comment"
         contentType:
-          type: string
-          description: The content type
-          example: "text"
+          $ref: '#/components/schemas/ContentType'
 
     CommentCreateObject: # Can be referenced as '#components/schemas/CommentCreateObject'
       allOf:
