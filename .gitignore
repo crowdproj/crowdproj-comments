@@ -14,3 +14,4 @@ out/
 
 # Log file
 *.log
+/specs/base.yaml
