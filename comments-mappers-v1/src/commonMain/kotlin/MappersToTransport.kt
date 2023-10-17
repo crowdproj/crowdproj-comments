@@ -1,50 +1,49 @@
 import com.crowdproj.comments.common.CommentContext
 import com.crowdproj.comments.common.NONE
-import exceptions.UnknownCommandException
 import com.crowdproj.comments.common.models.*
 import com.crowdproj.product.comments.api.v1.models.*
 import kotlinx.datetime.Instant
 
-fun CommentContext.toTransport(): IResponse = when (command) {
+fun CommentContext.toTransport(): IResponse? = when (command) {
     CommentCommand.CREATE -> toTransportCreate()
     CommentCommand.READ -> toTransportRead()
     CommentCommand.UPDATE -> toTransportUpdate()
     CommentCommand.DELETE -> toTransportDelete()
     CommentCommand.SEARCH -> toTransportSearch()
-    else -> throw UnknownCommandException(command)
+    CommentCommand.NONE -> null
 }
 
 private fun CommentContext.toTransportCreate() = CommentCreateResponse(
     requestId = this.requestId.asString().takeIf { it.isNotBlank() },
-    result = if (state == CommentState.RUNNING) ResponseResult.SUCCESS else ResponseResult.ERROR,
+    result = state.toTransport(),
     errors = errors.toTransportErrors(),
     comment = commentResponse.toTransportComment()
 )
 
 private fun CommentContext.toTransportRead() = CommentReadResponse(
     requestId = this.requestId.asString().takeIf { it.isNotBlank() },
-    result = if (state == CommentState.RUNNING) ResponseResult.SUCCESS else ResponseResult.ERROR,
+    result = state.toTransport(),
     errors = errors.toTransportErrors(),
-    comments = commentsResponse.toTransportComments()
+    comment = commentResponse.toTransportComment()
 )
 
 private fun CommentContext.toTransportUpdate() = CommentUpdateResponse(
     requestId = this.requestId.asString().takeIf { it.isNotBlank() },
-    result = if (state == CommentState.RUNNING) ResponseResult.SUCCESS else ResponseResult.ERROR,
+    result = state.toTransport(),
     errors = errors.toTransportErrors(),
     comment = commentResponse.toTransportComment()
 )
 
 private fun CommentContext.toTransportDelete() = CommentDeleteResponse(
     requestId = this.requestId.asString().takeIf { it.isNotBlank() },
-    result = if (state == CommentState.RUNNING) ResponseResult.SUCCESS else ResponseResult.ERROR,
+    result = state.toTransport(),
     errors = errors.toTransportErrors(),
     comment = commentResponse.toTransportComment()
 )
 
 private fun CommentContext.toTransportSearch() = CommentSearchResponse(
     requestId = this.requestId.asString().takeIf { it.isNotBlank() },
-    result = if (state == CommentState.RUNNING) ResponseResult.SUCCESS else ResponseResult.ERROR,
+    result = state.toTransport(),
     errors = errors.toTransportErrors(),
     comments = commentsResponse.toTransportComments()
 )
@@ -58,8 +57,8 @@ private fun CommentError.toTransportError() = Error(
     code = code.takeIf { it.isNotBlank() },
     group = group.takeIf { it.isNotBlank() },
     field = field.takeIf { it.isNotBlank() },
-    title = title.takeIf { it.isNotBlank() },
-    description = description.takeIf { it.isNotBlank() }
+    title = message.takeIf { it.isNotBlank() },
+    description = null
 )
 
 private fun MutableList<Comment>.toTransportComments() = this
@@ -91,4 +90,11 @@ private fun CommentContentType.toTransport() = when (this) {
     CommentContentType.HTML -> ContentType.HTML
     CommentContentType.JSON -> ContentType.JSON
     CommentContentType.NONE -> null
+}
+
+private fun CommentState.toTransport() = when (this) {
+    CommentState.NONE -> null
+    CommentState.RUNNING -> ResponseResult.SUCCESS
+    CommentState.FAILING -> ResponseResult.ERROR
+    CommentState.FINISHING -> ResponseResult.SUCCESS
 }

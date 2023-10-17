@@ -4,8 +4,7 @@ data class CommentError(
     val code: String = "",
     val group: String = "",
     val field: String = "",
-    val title: String = "",
-    val description: String = "",
+    val message: String = "",
     val exception: Throwable? = null,
     val level: Level = Level.ERROR,
 ) {

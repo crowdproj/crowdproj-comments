@@ -4,6 +4,7 @@ plugins {
     kotlin("plugin.serialization")
 }
 
+val specDir = "${layout.buildDirectory.get()}/specs"
 val apiVersion = "v1"
 val apiSpec: Configuration by configurations.creating
 val apiSpecVersion: String by project
@@ -18,8 +19,11 @@ dependencies {
 }
 
 kotlin {
-    jvm { }
-    linuxX64 { }
+    jvm { withJava() }
+    js {
+        browser {}
+    }
+    linuxX64 {}
 
     sourceSets {
         val serializationVersion: String by project
@@ -47,46 +51,37 @@ kotlin {
                 implementation(kotlin("test-junit"))
             }
         }
+        val jsTest by getting {
+            dependencies {
+                implementation(kotlin("test-js"))
+            }
+        }
+    }
+}
+
+tasks {
+    val getSpecs: Task by creating(Copy::class) {
+        group = "openapi tools"
+        from("${rootProject.projectDir}/specs")
+        from(apiSpec) {
+            rename { "base.yaml" }
+        }
+        into(specDir)
+    }
+    this.openApiGenerate {
+        dependsOn(getSpecs)
+        mustRunAfter("compileCommonMainKotlinMetadata")
+    }
+    filter { it.name.startsWith("compile") }.forEach {
+        it.dependsOn(openApiGenerate)
     }
 }
 
 crowdprojGenerate {
     packageName.set("${project.group}.api.v1")
-    inputSpec.set(layout.buildDirectory.file("spec-comments-$apiVersion.yaml").map { it.asFile.path })
+    inputSpec.set("${specDir}/spec-comments-$apiVersion.yaml")
 }
 
-val getSpecs: Task by tasks.creating {
-    doFirst {
-        copy {
-            from("${rootProject.projectDir}/specs")
-            into(layout.buildDirectory)
-        }
-        copy {
-            from(apiSpec.asPath)
-            into(layout.buildDirectory)
-            rename { "base.yaml" }
-        }
-    }
-}
 openApiValidate {
-    inputSpec.set(layout.buildDirectory.file("spec-comments-$apiVersion.yaml").map { it.asFile.path })
-}
-
-tasks {
-    this.openApiGenerate {
-        dependsOn(getSpecs)
-    }
-    this.openApiValidate {
-        dependsOn(getSpecs)
-    }
-}
-
-afterEvaluate {
-    val openApiGenerate = tasks.getByName("openApiGenerate")
-    tasks.filter { it.name.startsWith("compile") }.forEach {
-        it.dependsOn(openApiGenerate)
-    }
-    tasks.filter { it.name.endsWith("Elements") }.forEach {
-        it.dependsOn(openApiGenerate)
-    }
+    inputSpec.set("${specDir}/spec-comments-$apiVersion.yaml")
 }

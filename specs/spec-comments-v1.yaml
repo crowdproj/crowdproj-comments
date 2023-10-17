@@ -1,7 +1,7 @@
-openapi: 3.0.4
+openapi: 3.0.3
 info:
-  title: crowdproj-comments
-  description: Microservice for managing comments feature for any object (article, product, news, etc.)
+  title: 'Marketplace comments service ${VERSION_APP}'
+  description: 'Microservice for managing comments feature for any object (article, product, news, etc.)'
   contact:
     email: soulofpain.k@gmail.com
   license:
@@ -10,18 +10,23 @@ info:
   version: 1.0.0
 servers:
   - url: http://localhost:8080
+  - url: http://127.0.0.1:8080
 tags:
   - name: comment
     description: support of comments microservice
 
-
 paths:
-  /comments/create:
+  /v1/create:
     post:
       tags:
         - comment
       summary: Create comment
       operationId: commentCreate
+      parameters:
+        - in: header
+          name: X-Request-ID
+          schema:
+            $ref: './base.yaml#/components/schemas/RequestId'
       requestBody:
         description: Request body
         content:
@@ -31,18 +36,22 @@ paths:
         required: true
       responses:
         200:
-          description: Success response
+          description: Success
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/CommentCreateResponse'
-
-  /comments/read:
+  /v1/read:
     post:
       tags:
         - comment
       summary: Read comment
       operationId: commentRead
+      parameters:
+        - in: header
+          name: X-Request-ID
+          schema:
+            $ref: './base.yaml#/components/schemas/RequestId'
       requestBody:
         description: Request body
         content:
@@ -57,13 +66,17 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/CommentReadResponse'
-
-  /comments/update:
+  /v1/update:
     post:
       tags:
         - comment
       summary: Update comment
       operationId: commentUpdate
+      parameters:
+        - in: header
+          name: X-Request-ID
+          schema:
+            $ref: './base.yaml#/components/schemas/RequestId'
       requestBody:
         description: Request body
         content:
@@ -78,13 +91,17 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/CommentUpdateResponse'
-
-  /comments/delete:
+  /v1/delete:
     post:
       tags:
         - comment
       summary: Delete comment
       operationId: commentDelete
+      parameters:
+        - in: header
+          name: X-Request-ID
+          schema:
+            $ref: './base.yaml#/components/schemas/RequestId'
       requestBody:
         description: Request body
         content:
@@ -99,13 +116,17 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/CommentDeleteResponse'
-
-  /comments/search:
+  /v1/search:
     post:
       tags:
         - comment
       summary: Search comment
       operationId: commentSearch
+      parameters:
+        - in: header
+          name: X-Request-ID
+          schema:
+            $ref: './base.yaml#/components/schemas/RequestId'
       requestBody:
         description: Request body
         content:
@@ -154,6 +175,7 @@ components:
               update: '#/components/schemas/CommentUpdateResponse'
               delete: '#/components/schemas/CommentDeleteResponse'
               search: '#/components/schemas/CommentSearchResponse'
+              init: '#/components/schemas/CommentInitResponse'
 
     Error:
       $ref: './base.yaml#/components/schemas/Error'
@@ -164,12 +186,12 @@ components:
     ResponseResult:
       $ref: './base.yaml#/components/schemas/ResponseResult'
 
-    CommentId: # Can be referenced as '#components/schemas/ContentId'
+    CommentId:
       type: string
       description: Comment identifier
       example: "12332221"
 
-    ObjectType: # Can be referenced as '#components/schemas/ObjectType'
+    ObjectType:
       type: string
       description: Object type comment referred to
       enum:
@@ -178,15 +200,15 @@ components:
         - 'ad'
       example: "ad"
 
-    ObjectId: # Can be referenced as '#components/schemas/ObjectId'
+    ObjectId:
       type: string
       description: Object identifier comment referred to
       example: "12321"
 
-    UserId: # Can be referenced as '#/components/schemas/UserId'
+    CommentUserId:
       $ref: './base.yaml#/components/schemas/UserId'
 
-    ContentType: # Can be referenced as '#/components/schemas/Content'
+    ContentType:
       type: string
       description: The content type
       enum:
@@ -196,11 +218,11 @@ components:
       example:
         "plain"
 
-    CommentLock: # Can be referenced as '#components/schemas/CommentLock'
+    CommentLock:
       type: string
       description: Comment optimistic lock version
 
-    BaseComment: # Can be referenced as '#components/schemas/BaseComment'
+    BaseComment:
       type: object
       description: The base object
       properties:
@@ -209,7 +231,7 @@ components:
         objectId:
           $ref: '#/components/schemas/ObjectId'
         userId:
-          $ref: '#/components/schemas/UserId'
+          $ref: '#/components/schemas/CommentUserId'
         content:
           type: object
           description: The comment content
@@ -217,9 +239,37 @@ components:
         contentType:
           $ref: '#/components/schemas/ContentType'
 
+    CommentInitResponse:
+      allOf:
+        - $ref: '#/components/schemas/ICommentResponse'
+
     CommentCreateObject: # Can be referenced as '#components/schemas/CommentCreateObject'
       allOf:
         - $ref: '#/components/schemas/BaseComment'
+
+    CommentCreateRequest: # Can be referenced as '#components/schemas/CommentCreateRequest'
+      allOf:
+        - $ref: '#/components/schemas/ICommentRequest'
+        - type: object
+          properties:
+            comment:
+              $ref: '#/components/schemas/CommentCreateObject'
+
+    CommentReadObject:
+      allOf:
+        - type: object
+          properties:
+            id:
+              $ref: '#/components/schemas/CommentId'
+
+    CommentReadRequest: # Can be referenced as '#components/schemas/CommentReadRequest'
+      allOf:
+        - $ref: '#/components/schemas/ICommentRequest'
+        - type: object
+          properties:
+            comment:
+              $ref: '#/components/schemas/CommentReadObject'
+
 
     CommentUpdateObject: # Can be referenced as '#components/schemas/CommentUpdateObject'
       allOf:
@@ -231,14 +281,6 @@ components:
             lock:
               $ref: '#/components/schemas/CommentLock'
 
-    CommentCreateRequest: # Can be referenced as '#components/schemas/CommentCreateRequest'
-      allOf:
-        - $ref: '#/components/schemas/ICommentRequest'
-        - type: object
-          properties:
-            comment:
-              $ref: '#/components/schemas/CommentCreateObject'
-
     CommentUpdateRequest: # Can be referenced as '#components/schemas/CommentUpdateRequest'
       allOf:
         - $ref: '#/components/schemas/ICommentRequest'
@@ -246,28 +288,23 @@ components:
           properties:
             comment:
               $ref: '#/components/schemas/CommentUpdateObject'
-            lock:
-              $ref: '#/components/schemas/CommentLock'
 
-    CommentReadRequest: # Can be referenced as '#components/schemas/CommentReadRequest'
+    CommentDeleteObject: # Can be referenced as '#components/schemas/CommentUpdateObject'
       allOf:
-        - $ref: '#/components/schemas/ICommentRequest'
         - type: object
           properties:
-            commentsIds:
-              type: array
-              items:
-                $ref: '#/components/schemas/CommentId'
+            id:
+              $ref: '#/components/schemas/CommentId'
+            lock:
+              $ref: '#/components/schemas/CommentLock'
 
     CommentDeleteRequest: # Can be referenced as '#components/schemas/CommentDeleteRequest'
       allOf:
         - $ref: '#/components/schemas/ICommentRequest'
         - type: object
           properties:
-            commentId:
-              $ref: '#/components/schemas/CommentId'
-            lock:
-              $ref: '#/components/schemas/CommentLock'
+            comment:
+              $ref: '#/components/schemas/CommentDeleteObject'
 
     CommentSearchFilter: # Can be referenced as '#components/schemas/CommentSearchFilter'
       type: object
@@ -278,7 +315,7 @@ components:
         objectId:
           $ref: '#/components/schemas/ObjectId'
         userId:
-          $ref: '#/components/schemas/UserId'
+          $ref: '#/components/schemas/CommentUserId'
 
     CommentSearchRequest: # Can be referenced as '#components/schemas/CommentSearchRequest'
       allOf:
@@ -306,6 +343,22 @@ components:
               description: A comment date and time updated
             lock:
               $ref: '#/components/schemas/CommentLock'
+            permissions:
+              type: array
+              uniqueItems: true
+              items:
+                $ref: '#/components/schemas/CommentPermissions'
+
+    CommentPermissions:
+      type: string
+      description: A list of available operations on comments
+      enum:
+        - read
+        - update
+        - delete
+        - makeVisiblePublic
+        - makeVisibleOwn
+        - makeVisibleGroup
 
     CommentResponseSingle:
       allOf:
@@ -333,7 +386,7 @@ components:
     CommentReadResponse: # Can be referenced as '#/components/schemas/RatingReadResponse'
       allOf:
         - $ref: '#/components/schemas/ICommentResponse'
-        - $ref: '#/components/schemas/CommentResponseMultiple'
+        - $ref: '#/components/schemas/CommentResponseSingle'
 
     CommentUpdateResponse: # Can be referenced as '#/components/schemas/RatingUpdateResponse'
       allOf:

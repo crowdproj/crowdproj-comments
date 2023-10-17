@@ -10,11 +10,11 @@ class ResponseSerializationTest{
         result = ResponseResult.SUCCESS,
         comment = CommentResponseObject(
             id = "5123",
-            objectType = "ad",
+            objectType = ObjectType.AD,
             objectId = "211124",
             userId = "12111",
             content = "This comment of the ad",
-            contentType = "PLAIN",
+            contentType = ContentType.PLAIN,
             createdAt = "2023-01-11T12:22:53Z",
             updatedAt = "2023-01-11T12:22:53Z"
         )
@@ -30,7 +30,7 @@ class ResponseSerializationTest{
         assertContains(json, Regex("\"objectId\":\\s*\"211124\""))
         assertContains(json, Regex("\"userId\":\\s*\"12111\""))
         assertContains(json, Regex("\"content\":\\s*\"This comment of the ad\""))
-        assertContains(json, Regex("\"contentType\":\\s*\"PLAIN\""))
+        assertContains(json, Regex("\"contentType\":\\s*\"plain\""))
         assertContains(json, Regex("\"createdAt\":\\s*\"2023-01-11T12:22:53Z\""))
         assertContains(json, Regex("\"updatedAt\":\\s*\"2023-01-11T12:22:53Z\""))
 
