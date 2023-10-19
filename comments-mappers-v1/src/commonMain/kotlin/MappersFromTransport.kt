@@ -4,16 +4,6 @@ import com.crowdproj.comments.common.models.*
 import com.crowdproj.comments.common.stubs.CommentStubs
 import com.crowdproj.product.comments.api.v1.models.*
 
-fun CommentContext.fromTransport(request: IRequest) = when (request) {
-    is ICommentRequest -> {
-        workMode = request.debug.transportToWorkMode()
-        stubCase = request.debug.transportToStubCase()
-        fromTransport(request)
-    }
-
-    else -> throw UnknownRequestException(request::class)
-}
-
 fun CommentContext.fromTransport(request: ICommentRequest) = when (request) {
     is CommentCreateRequest -> fromTransport(request)
     is CommentUpdateRequest -> fromTransport(request)
@@ -21,6 +11,9 @@ fun CommentContext.fromTransport(request: ICommentRequest) = when (request) {
     is CommentSearchRequest -> fromTransport(request)
     is CommentReadRequest -> fromTransport(request)
     else -> throw UnknownRequestException(request::class)
+}.also {
+    workMode = request.debug.transportToWorkMode()
+    stubCase = request.debug.transportToStubCase()
 }
 
 fun CommentContext.fromTransport(request: CommentCreateRequest) {
@@ -30,7 +23,7 @@ fun CommentContext.fromTransport(request: CommentCreateRequest) {
 
 fun CommentContext.fromTransport(request: CommentReadRequest) {
     command = CommentCommand.READ
-    request.commentsIds.toCommentsWithId()
+    request.comment?.id.toCommentId()
 }
 
 fun CommentContext.fromTransport(request: CommentUpdateRequest) {
@@ -40,8 +33,8 @@ fun CommentContext.fromTransport(request: CommentUpdateRequest) {
 
 fun CommentContext.fromTransport(request: CommentDeleteRequest) {
     command = CommentCommand.DELETE
-    commentRequest = request.commentId.toCommentWithId().also {
-        it.lock = request.lock.toCommentLock()
+    commentRequest = request.comment?.id.toCommentWithId().also {
+        it.lock = request.comment?.lock.toCommentLock()
     }
 }
 

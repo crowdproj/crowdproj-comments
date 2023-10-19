@@ -1,19 +1,14 @@
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-
 plugins {
     kotlin("jvm") apply false
     kotlin("multiplatform") apply false
 }
 
 group = "com.crowdproj.product.comments"
-version = "0.0.1"
+version = System.getenv("PROJECT_VERSION") ?: "0.0.1-SNAPSHOT"
 
-val javaVersion: String by project
-
-allprojects {
-    repositories{
-        mavenCentral()
-    }
+repositories {
+    mavenCentral()
+    maven { url = uri("<https://maven.pkg.jetbrains.space/public/p/ktor/eap>") }
 }
 
 subprojects {
@@ -22,8 +17,16 @@ subprojects {
 
     repositories {
         mavenCentral()
+        maven { url = uri("<https://maven.pkg.jetbrains.space/public/p/ktor/eap>") }
     }
-    tasks.withType<KotlinCompile> {
-        kotlinOptions.jvmTarget = javaVersion
+}
+
+tasks {
+    val deploy: Task by creating {
+        dependsOn("build")
     }
+}
+
+afterEvaluate {
+    println("VERSION: ${project.version}")
 }

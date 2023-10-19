@@ -12,7 +12,8 @@ data class Comment (
     var contentType:CommentContentType  = CommentContentType.NONE,
     var createdAt: Instant = Instant.NONE,
     var updatedAt: Instant = Instant.NONE,
-    var lock: CommentLock = CommentLock.NONE
+    var lock: CommentLock = CommentLock.NONE,
+    var permissionClient: MutableSet<CommentPermissionClient> = mutableSetOf(),
     ){
     companion object {
         val NONE = Comment()
