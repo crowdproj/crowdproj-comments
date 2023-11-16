@@ -5,8 +5,8 @@ import com.crowdproj.comments.common.CommentContext
 import com.crowdproj.comments.common.helpers.asCommentError
 import com.crowdproj.comments.common.helpers.fail
 import com.crowdproj.comments.common.models.CommentRequestId
-import com.crowdproj.product.comments.api.v1.models.ICommentRequest
-import com.crowdproj.product.comments.api.v1.models.ICommentResponse
+import com.crowdproj.comments.api.v1.models.ICommentRequest
+import com.crowdproj.comments.api.v1.models.ICommentResponse
 import fromTransport
 import io.ktor.http.*
 import io.ktor.server.application.*

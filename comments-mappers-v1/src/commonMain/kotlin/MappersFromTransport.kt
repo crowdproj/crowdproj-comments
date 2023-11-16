@@ -2,7 +2,7 @@ import com.crowdproj.comments.common.CommentContext
 import exceptions.UnknownRequestException
 import com.crowdproj.comments.common.models.*
 import com.crowdproj.comments.common.stubs.CommentStubs
-import com.crowdproj.product.comments.api.v1.models.*
+import com.crowdproj.comments.api.v1.models.*
 
 fun CommentContext.fromTransport(request: ICommentRequest) = when (request) {
     is CommentCreateRequest -> fromTransport(request)

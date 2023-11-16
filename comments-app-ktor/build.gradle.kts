@@ -4,17 +4,11 @@ import com.bmuschko.gradle.docker.tasks.image.Dockerfile
 import org.jetbrains.kotlin.gradle.tasks.KotlinNativeLink
 
 plugins {
-    kotlin("plugin.serialization")
-    kotlin("multiplatform")
-    id("io.ktor.plugin")
-    id("com.bmuschko.docker-remote-api")
+    alias(libs.plugins.kotlinx.serialization)
+    alias(libs.plugins.kotlin.multiplatform)
+    alias(libs.plugins.ktor)
+    alias(libs.plugins.bmuschko)
 }
-
-val datetimeVersion: String by project
-val coroutinesVersion: String by project
-val logbackVersion: String by project
-val slf4jVersion: String by project
-val uuid: String by project
 
 application {
     mainClass.set("io.ktor.server.cio.EngineMain")
@@ -37,8 +31,8 @@ kotlin {
         val commonMain by getting {
             dependencies {
                 implementation(kotlin("stdlib-common"))
-                api("org.jetbrains.kotlinx:kotlinx-datetime:$datetimeVersion")
-                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesVersion")
+                api(libs.kotlinx.datetime)
+                implementation(libs.kotlinx.coroutines.core)
                 implementation(libs.kotlinx.serialization.core)
                 implementation(libs.kotlinx.serialization.json)
                 implementation(libs.ktor.serialization.kotlinx.json)
@@ -58,9 +52,7 @@ kotlin {
                 implementation(libs.ktor.server.cio)
                 implementation(libs.ktor.server.auth)
 
-                implementation(libs.ktor.server.swagger)
-
-                implementation("com.benasher44:uuid:$uuid")
+                implementation(libs.uuid)
 
                 implementation(project(":comments-log"))
 
@@ -86,10 +78,12 @@ kotlin {
 
         val jvmMain by getting {
             dependencies {
-                implementation("ch.qos.logback:logback-classic:$logbackVersion")
-                implementation("ch.qos.logback:logback-access:$logbackVersion")
+                implementation(libs.logback.classic)
+                implementation(libs.logback.access)
 
-                implementation("org.slf4j:slf4j-api:$slf4jVersion")
+                implementation(libs.ktor.server.swagger)
+
+                implementation(libs.slf4j.api)
             }
         }
 
@@ -168,7 +162,7 @@ tasks {
     val registryPass: String? = System.getenv("CONTAINER_REGISTRY_PASS")
     val registryHost: String? = System.getenv("CONTAINER_REGISTRY_HOST")
     val registryPref: String? = System.getenv("CONTAINER_REGISTRY_PREF")
-    val imageName = registryPref?.let { "$it/${project.name}" } ?: project.name.toString()
+    val imageName = registryPref?.let { "$it/${project.name}" } ?: project.name
 
     val dockerBuildNativeImage by creating(DockerBuildImage::class) {
         group = "docker"

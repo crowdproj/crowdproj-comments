@@ -1,4 +1,4 @@
-import com.crowdproj.product.comments.api.v1.models.*
+import com.crowdproj.comments.api.v1.models.*
 import kotlin.test.Test
 import kotlin.test.assertContains
 import kotlin.test.assertEquals

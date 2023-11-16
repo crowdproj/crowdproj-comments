@@ -1,7 +1,7 @@
 import com.crowdproj.comments.common.CommentContext
 import com.crowdproj.comments.common.NONE
 import com.crowdproj.comments.common.models.*
-import com.crowdproj.product.comments.api.v1.models.*
+import com.crowdproj.comments.api.v1.models.*
 import kotlinx.datetime.Instant
 
 fun CommentContext.toTransport(): IResponse? = when (command) {

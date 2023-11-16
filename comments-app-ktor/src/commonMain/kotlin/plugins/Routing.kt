@@ -1,7 +1,7 @@
 package com.crowdproj.comments.app.plugins
 
 import com.crowdproj.comments.app.configs.CommentsAppSettings
-import com.crowdproj.product.comments.api.v1.models.*
+import com.crowdproj.comments.api.v1.models.*
 import helpers.controllerHelperV1
 import io.ktor.server.application.*
 import io.ktor.server.routing.*
