@@ -15,7 +15,6 @@ fun Application.configureRouting(appConfig: CommentsAppSettings) {
     initRest(appConfig)
     initCors(appConfig)
     routing {
-        //trace { application.log.trace(it.buildText()) }
 
         swagger(appConfig)
         route("v1") {
