@@ -11,10 +11,12 @@ fun CommentContext.toTransport(): IResponse = when (command) {
     CommentCommand.UPDATE -> toTransportUpdate()
     CommentCommand.DELETE -> toTransportDelete()
     CommentCommand.SEARCH -> toTransportSearch()
+    CommentCommand.INIT -> toTransportInit()
+    CommentCommand.FINISH -> throw UnknownCommandException(command)
     CommentCommand.NONE -> throw UnknownCommandException(command)
 }
 
-fun CommentContext.toTransportInit() = CommentInitResponse(
+private fun CommentContext.toTransportInit() = CommentInitResponse(
     requestId = this.requestId.asString().takeIf { it.isNotBlank() },
     result = if (errors.isEmpty()) ResponseResult.SUCCESS else ResponseResult.ERROR,
     errors = errors.toTransportErrors()

@@ -21,7 +21,7 @@ class RequestSerializationTest {
 
     @Test
     fun serialize() {
-        val json = commentsApiV1Json.encodeToString(ICommentRequest.serializer(), request)
+        val json = request.encode()
 
         assertContains(json, Regex("\"requestType\":\\s*\"create\""))
         assertContains(json, Regex("\"mode\":\\s*\"stub\""))
@@ -35,8 +35,8 @@ class RequestSerializationTest {
 
     @Test
     fun deserialize() {
-        val json = commentsApiV1Json.encodeToString(ICommentRequest.serializer(), request)
-        val obj = commentsApiV1Json.decodeFromString(ICommentRequest.serializer(), json) as CommentCreateRequest
+        val json = request.encode()
+        val obj = json.decodeRequest<CommentCreateRequest>()
 
         assertEquals(request, obj)
     }

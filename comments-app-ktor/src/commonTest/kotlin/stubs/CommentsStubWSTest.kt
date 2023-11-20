@@ -2,12 +2,12 @@ package stubs
 
 import com.crowdproj.comments.api.v1.models.*
 import com.crowdproj.comments.api.v1.models.ContentType
-import commentsApiV1Json
+import decodeResponse
+import encode
 import io.ktor.client.plugins.websocket.*
 import io.ktor.server.testing.*
 import io.ktor.websocket.*
 import kotlinx.coroutines.withTimeout
-import kotlinx.serialization.encodeToString
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertIs
@@ -109,7 +109,7 @@ class CommentsStubWSTest {
 
     }
 
-    private inline fun <reified T> testMethod(
+    private inline fun <reified T: IResponse> testMethod(
         request: IRequest,
         crossinline assertBlock: (T) -> Unit
     ) = testApplication {
@@ -120,15 +120,15 @@ class CommentsStubWSTest {
         client.webSocket("/v1/ws") {
             withTimeout(3000) {
                 val income = incoming.receive() as Frame.Text
-                val response = commentsApiV1Json.decodeFromString<CommentInitResponse>(income.readText())
+                val response = income.readText().decodeResponse<CommentInitResponse>()
                 assertIs<CommentInitResponse>(response)
                 assertEquals(response.result, ResponseResult.SUCCESS)
             }
-            send(Frame.Text(commentsApiV1Json.encodeToString(request)))
+            send(Frame.Text(request.encode()))
             withTimeout(3000) {
                 val incame = incoming.receive() as Frame.Text
                 val text = incame.readText()
-                val response = commentsApiV1Json.decodeFromString<T>(text)
+                val response = text.decodeResponse<T>()
 
                 assertBlock(response)
             }
