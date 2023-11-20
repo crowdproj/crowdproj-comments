@@ -2,18 +2,18 @@ package com.crowdproj.comments.app.plugins
 
 import com.crowdproj.comments.app.configs.CommentsAppSettings
 import com.crowdproj.comments.api.v1.models.*
+import com.crowdproj.comments.app.controllers.wsHandler
 import helpers.controllerHelperV1
 import io.ktor.server.application.*
 import io.ktor.server.routing.*
+import io.ktor.server.websocket.*
 import kotlin.io.encoding.ExperimentalEncodingApi
-import kotlin.reflect.KClass
-
-private val clazz: KClass<*> = Application::configureRouting::class
 
 @OptIn(ExperimentalEncodingApi::class)
 fun Application.configureRouting(appConfig: CommentsAppSettings) {
     initRest(appConfig)
     initCors(appConfig)
+    install(WebSockets)
     routing {
 
         swagger(appConfig)
@@ -33,7 +33,11 @@ fun Application.configureRouting(appConfig: CommentsAppSettings) {
             post("search") {
                 call.controllerHelperV1<CommentSearchRequest, CommentSearchResponse>(appConfig)
             }
+            webSocket("ws") {
+                wsHandler(appConfig)
+            }
         }
+
     }
 }
 

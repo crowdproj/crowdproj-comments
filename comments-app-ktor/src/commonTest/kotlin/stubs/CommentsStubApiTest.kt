@@ -35,7 +35,6 @@ class CommentsStubApiTest {
             setBody(requestObj)
         }
         val responseObj = response.body<CommentCreateResponse>()
-        println(responseObj)
         assertEquals(200, response.status.value)
         assertEquals("5312", responseObj.comment?.id)
     }
@@ -58,7 +57,6 @@ class CommentsStubApiTest {
             setBody(requestObj)
         }
         val responseObj = response.body<CommentReadResponse>()
-        println(responseObj)
         assertEquals(200, response.status.value)
         assertEquals("5312", responseObj.comment?.id)
     }
@@ -85,7 +83,6 @@ class CommentsStubApiTest {
             setBody(requestObj)
         }
         val responseObj = response.body<CommentUpdateResponse>()
-        println(responseObj)
         assertEquals(200, response.status.value)
         assertEquals("5312", responseObj.comment?.id)
     }
@@ -108,7 +105,6 @@ class CommentsStubApiTest {
             setBody(requestObj)
         }
         val responseObj = response.body<CommentDeleteResponse>()
-        println(responseObj)
         assertEquals(200, response.status.value)
         assertEquals("5312", responseObj.comment?.id)
     }
@@ -133,7 +129,6 @@ class CommentsStubApiTest {
             setBody(requestObj)
         }
         val responseObj = response.body<CommentSearchResponse>()
-        println(responseObj)
         assertEquals(200, response.status.value)
         assertEquals("cr-111-01", responseObj.comments?.first()?.id)
     }

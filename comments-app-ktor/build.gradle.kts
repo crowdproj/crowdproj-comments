@@ -35,18 +35,18 @@ kotlin {
                 implementation(libs.kotlinx.coroutines.core)
                 implementation(libs.kotlinx.serialization.core)
                 implementation(libs.kotlinx.serialization.json)
+
+//                implementation(libs.ktor.client.core)
+//                implementation(libs.ktor.client.cio)
+
                 implementation(libs.ktor.serialization.kotlinx.json)
                 implementation(libs.ktor.serialization)
-
-                implementation(libs.ktor.client.core)
-                implementation(libs.ktor.client.cio)
-
                 implementation(libs.ktor.server.content.negotiation)
                 implementation(libs.ktor.server.auto.head.response)
                 implementation(libs.ktor.server.caching.headers)
                 implementation(libs.ktor.server.cors)
                 implementation(libs.ktor.server.call.id)
-                //implementation(libs.ktor.server.websockets)
+                implementation(libs.ktor.server.websockets)
                 implementation(libs.ktor.server.config.yaml)
                 implementation(libs.ktor.server.core)
                 implementation(libs.ktor.server.cio)
@@ -73,6 +73,7 @@ kotlin {
                 implementation(libs.ktor.server.test.host)
                 implementation(libs.ktor.client.content.negotiation)
                 implementation(libs.ktor.client.mock)
+                implementation(libs.ktor.client.websockets)
             }
         }
 
