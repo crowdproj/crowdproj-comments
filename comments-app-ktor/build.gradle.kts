@@ -54,7 +54,7 @@ kotlin {
 
                 implementation(libs.uuid)
 
-                implementation(project(":comments-log"))
+                implementation(project(":comments-lib-logging-common"))
 
                 implementation(project(":comments-common"))
 
