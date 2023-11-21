@@ -14,7 +14,6 @@ import io.ktor.server.plugins.contentnegotiation.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.utils.io.charsets.*
-import kotlinx.datetime.Clock
 
 suspend inline fun <reified Rq : ICommentRequest, reified Rs : ICommentResponse> ApplicationCall.controllerHelperV1(
     appSettings: CommentsAppSettings
@@ -29,7 +28,6 @@ suspend inline fun <reified Rq : ICommentRequest, reified Rs : ICommentResponse>
     try {
         appSettings.controllerHelper(
             {
-                this.timeStarted = Clock.System.now()
                 this.requestId = requestId?.let { CommentRequestId(it) } ?: CommentRequestId.NONE
                 fromTransport(receive<Rq>())
             },
