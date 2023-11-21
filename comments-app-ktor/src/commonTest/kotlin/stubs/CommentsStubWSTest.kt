@@ -1,9 +1,9 @@
 package stubs
 
+import com.crowdproj.comments.api.v1.decodeResponse
+import com.crowdproj.comments.api.v1.encode
 import com.crowdproj.comments.api.v1.models.*
 import com.crowdproj.comments.api.v1.models.ContentType
-import decodeResponse
-import encode
 import io.ktor.client.plugins.websocket.*
 import io.ktor.server.testing.*
 import io.ktor.websocket.*

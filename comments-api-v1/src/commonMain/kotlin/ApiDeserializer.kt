@@ -1,3 +1,5 @@
+package com.crowdproj.comments.api.v1
+
 import com.crowdproj.comments.api.v1.models.IRequest
 import com.crowdproj.comments.api.v1.models.IResponse
 

@@ -61,6 +61,7 @@ kotlin {
                 implementation(project(":comments-api-v1"))
                 implementation(project(":comments-mappers-v1"))
                 implementation(project(":comments-biz"))
+                implementation(project(":comments-app-common"))
                 implementation(project(":comments-swagger"))
             }
         }

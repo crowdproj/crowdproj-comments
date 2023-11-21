@@ -1,3 +1,5 @@
+package com.crowdproj.comments.api.v1
+
 import com.crowdproj.comments.api.v1.models.*
 import kotlin.test.Test
 import kotlin.test.assertContains

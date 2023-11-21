@@ -1,8 +1,8 @@
 package stubs
 
+import com.crowdproj.comments.api.v1.commentsApiV1Json
 import com.crowdproj.comments.api.v1.models.*
 import com.crowdproj.comments.api.v1.models.ContentType
-import commentsApiV1Json
 import io.ktor.client.call.*
 import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.client.request.*

@@ -1,3 +1,5 @@
+package com.crowdproj.comments.biz
+
 import com.crowdproj.comments.common.CommentContext
 import com.crowdproj.comments.common.config.CommentsCorSettings
 import com.crowdproj.comments.common.models.CommentCommand
