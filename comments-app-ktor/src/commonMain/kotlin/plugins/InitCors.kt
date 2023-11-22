@@ -1,10 +1,11 @@
 package com.crowdproj.comments.app.plugins
 
 import com.crowdproj.comments.app.configs.CommentsAppSettings
+import com.crowdproj.comments.log.LogLevel
+import com.crowdproj.comments.log.log
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.plugins.cors.routing.*
-import log
 import kotlin.reflect.KClass
 
 private val clazz: KClass<*> = Application::initCors::class

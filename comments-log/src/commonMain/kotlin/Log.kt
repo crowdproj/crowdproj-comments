@@ -1,3 +1,5 @@
+package com.crowdproj.comments.log
+
 import kotlin.reflect.KClass
 
 expect fun log(

@@ -1,8 +1,8 @@
 package stubs
 
-import com.crowdproj.product.comments.api.v1.models.*
-import com.crowdproj.product.comments.api.v1.models.ContentType
-import commentsApiV1Json
+import com.crowdproj.comments.api.v1.commentsApiV1Json
+import com.crowdproj.comments.api.v1.models.*
+import com.crowdproj.comments.api.v1.models.ContentType
 import io.ktor.client.call.*
 import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.client.request.*
@@ -35,7 +35,6 @@ class CommentsStubApiTest {
             setBody(requestObj)
         }
         val responseObj = response.body<CommentCreateResponse>()
-        println(responseObj)
         assertEquals(200, response.status.value)
         assertEquals("5312", responseObj.comment?.id)
     }
@@ -58,7 +57,6 @@ class CommentsStubApiTest {
             setBody(requestObj)
         }
         val responseObj = response.body<CommentReadResponse>()
-        println(responseObj)
         assertEquals(200, response.status.value)
         assertEquals("5312", responseObj.comment?.id)
     }
@@ -85,7 +83,6 @@ class CommentsStubApiTest {
             setBody(requestObj)
         }
         val responseObj = response.body<CommentUpdateResponse>()
-        println(responseObj)
         assertEquals(200, response.status.value)
         assertEquals("5312", responseObj.comment?.id)
     }
@@ -108,7 +105,6 @@ class CommentsStubApiTest {
             setBody(requestObj)
         }
         val responseObj = response.body<CommentDeleteResponse>()
-        println(responseObj)
         assertEquals(200, response.status.value)
         assertEquals("5312", responseObj.comment?.id)
     }
@@ -133,7 +129,6 @@ class CommentsStubApiTest {
             setBody(requestObj)
         }
         val responseObj = response.body<CommentSearchResponse>()
-        println(responseObj)
         assertEquals(200, response.status.value)
         assertEquals("cr-111-01", responseObj.comments?.first()?.id)
     }

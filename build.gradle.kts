@@ -1,9 +1,9 @@
 plugins {
-    kotlin("jvm") apply false
-    kotlin("multiplatform") apply false
+    alias(libs.plugins.kotlin.jvm) apply false
+    alias(libs.plugins.kotlin.multiplatform) apply false
 }
 
-group = "com.crowdproj.product.comments"
+group = "com.crowdproj.comments"
 version = System.getenv("PROJECT_VERSION") ?: "0.0.1-SNAPSHOT"
 
 repositories {

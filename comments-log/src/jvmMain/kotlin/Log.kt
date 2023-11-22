@@ -1,3 +1,5 @@
+package com.crowdproj.comments.log
+
 import org.slf4j.LoggerFactory
 import kotlin.reflect.KClass
 

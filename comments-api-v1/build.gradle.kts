@@ -1,18 +1,17 @@
 plugins {
-    kotlin("multiplatform")
-    id("com.crowdproj.generator")
-    kotlin("plugin.serialization")
+    alias(libs.plugins.kotlin.multiplatform)
+    alias(libs.plugins.crowdproj.generator)
+    alias(libs.plugins.kotlinx.serialization)
 }
 
 val specDir = "${layout.buildDirectory.get()}/specs"
 val apiVersion = "v1"
 val apiSpec: Configuration by configurations.creating
-val apiSpecVersion: String by project
 dependencies {
     apiSpec(
         group = "com.crowdproj",
         name = "specs-v1",
-        version = apiSpecVersion,
+        version = libs.versions.apiSpec.get(),
         classifier = "openapi",
         ext = "yaml"
     )
@@ -34,8 +33,8 @@ kotlin {
             dependencies {
                 implementation(kotlin("stdlib-common"))
 
-                implementation("org.jetbrains.kotlinx:kotlinx-serialization-core:$serializationVersion")
-                implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:$serializationVersion")
+                implementation(libs.kotlinx.serialization.core)
+                implementation(libs.kotlinx.serialization.json)
             }
         }
 

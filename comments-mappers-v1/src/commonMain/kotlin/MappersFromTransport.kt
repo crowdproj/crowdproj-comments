@@ -1,8 +1,10 @@
+package com.crowdproj.comments.mappers.v1
+
 import com.crowdproj.comments.common.CommentContext
 import exceptions.UnknownRequestException
 import com.crowdproj.comments.common.models.*
 import com.crowdproj.comments.common.stubs.CommentStubs
-import com.crowdproj.product.comments.api.v1.models.*
+import com.crowdproj.comments.api.v1.models.*
 
 fun CommentContext.fromTransport(request: ICommentRequest) = when (request) {
     is CommentCreateRequest -> fromTransport(request)
@@ -16,29 +18,29 @@ fun CommentContext.fromTransport(request: ICommentRequest) = when (request) {
     stubCase = request.debug.transportToStubCase()
 }
 
-fun CommentContext.fromTransport(request: CommentCreateRequest) {
+private fun CommentContext.fromTransport(request: CommentCreateRequest) {
     command = CommentCommand.CREATE
     commentRequest = request.comment?.toInternal() ?: Comment()
 }
 
-fun CommentContext.fromTransport(request: CommentReadRequest) {
+private fun CommentContext.fromTransport(request: CommentReadRequest) {
     command = CommentCommand.READ
     request.comment?.id.toCommentId()
 }
 
-fun CommentContext.fromTransport(request: CommentUpdateRequest) {
+private fun CommentContext.fromTransport(request: CommentUpdateRequest) {
     command = CommentCommand.UPDATE
     commentRequest = request.comment?.toInternal() ?: Comment()
 }
 
-fun CommentContext.fromTransport(request: CommentDeleteRequest) {
+private fun CommentContext.fromTransport(request: CommentDeleteRequest) {
     command = CommentCommand.DELETE
     commentRequest = request.comment?.id.toCommentWithId().also {
         it.lock = request.comment?.lock.toCommentLock()
     }
 }
 
-fun CommentContext.fromTransport(request: CommentSearchRequest) {
+private fun CommentContext.fromTransport(request: CommentSearchRequest) {
     command = CommentCommand.SEARCH
     commentFilterRequest = request.commentFilter?.toInternal() ?: CommentFilter.NONE
 }

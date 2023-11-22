@@ -10,12 +10,11 @@ version = rootProject.version
 
 val apiVersion = "v1"
 val apiSpec: Configuration by configurations.creating
-val apiSpecVersion: String by project
 dependencies {
     apiSpec(
         group = "com.crowdproj",
         name = "specs-v1",
-        version = apiSpecVersion,
+        version = libs.versions.apiSpec.get(),
         classifier = "openapi",
         ext = "yaml"
     )
@@ -28,7 +27,6 @@ kotlin {
     linuxX64 { }
 
     sourceSets {
-        val serializationVersion: String by project
 
         val commonMain by getting {
 
@@ -36,8 +34,8 @@ kotlin {
             dependencies {
                 implementation(kotlin("stdlib-common"))
 
-                implementation("org.jetbrains.kotlinx:kotlinx-serialization-core:$serializationVersion")
-                implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:$serializationVersion")
+                implementation(libs.kotlinx.serialization.core)
+                implementation(libs.kotlinx.serialization.json)
             }
         }
 

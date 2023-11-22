@@ -1,17 +1,28 @@
+package com.crowdproj.comments.mappers.v1
+
 import com.crowdproj.comments.common.CommentContext
 import com.crowdproj.comments.common.NONE
 import com.crowdproj.comments.common.models.*
-import com.crowdproj.product.comments.api.v1.models.*
+import com.crowdproj.comments.api.v1.models.*
+import exceptions.UnknownCommandException
 import kotlinx.datetime.Instant
 
-fun CommentContext.toTransport(): IResponse? = when (command) {
+fun CommentContext.toTransport(): IResponse = when (command) {
     CommentCommand.CREATE -> toTransportCreate()
     CommentCommand.READ -> toTransportRead()
     CommentCommand.UPDATE -> toTransportUpdate()
     CommentCommand.DELETE -> toTransportDelete()
     CommentCommand.SEARCH -> toTransportSearch()
-    CommentCommand.NONE -> null
+    CommentCommand.INIT -> toTransportInit()
+    CommentCommand.FINISH -> throw UnknownCommandException(command)
+    CommentCommand.NONE -> throw UnknownCommandException(command)
 }
+
+private fun CommentContext.toTransportInit() = CommentInitResponse(
+    requestId = this.requestId.asString().takeIf { it.isNotBlank() },
+    result = if (errors.isEmpty()) ResponseResult.SUCCESS else ResponseResult.ERROR,
+    errors = errors.toTransportErrors()
+)
 
 private fun CommentContext.toTransportCreate() = CommentCreateResponse(
     requestId = this.requestId.asString().takeIf { it.isNotBlank() },

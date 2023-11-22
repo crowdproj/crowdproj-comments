@@ -1,4 +1,6 @@
-import com.crowdproj.product.comments.api.v1.models.*
+package com.crowdproj.comments.api.v1
+
+import com.crowdproj.comments.api.v1.models.*
 import kotlinx.serialization.json.Json
 import kotlin.test.Test
 import kotlin.test.assertContains

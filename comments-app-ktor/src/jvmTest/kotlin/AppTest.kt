@@ -1,4 +1,3 @@
-import com.crowdproj.comments.app.module
 import io.ktor.client.call.*
 import io.ktor.client.request.*
 import io.ktor.http.*
@@ -11,13 +10,12 @@ class AppTest {
 
     @Test
     fun root() = testApplication {
-        application { module() }
         val response = client.get("/")
         assertEquals(HttpStatusCode.OK, response.status)
 
         val body = response.body<String>()
 
-        assertContains(body, "Marketplace comments service")
+        assertContains(body, "SwaggerUI")
     }
 
 }

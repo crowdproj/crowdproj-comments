@@ -7,7 +7,6 @@ kotlin {
     linuxX64 {}
 
     sourceSets {
-        val coroutinesVersion: String by project
 
         all { languageSettings.optIn("kotlin.RequiresOptIn") }
 
@@ -24,7 +23,7 @@ kotlin {
                 implementation(kotlin("test-common"))
                 implementation(kotlin("test-annotations-common"))
 
-                api("org.jetbrains.kotlinx:kotlinx-coroutines-test:$coroutinesVersion")
+                api(libs.kotlinx.coroutines.test)
             }
         }
         val jvmMain by getting {

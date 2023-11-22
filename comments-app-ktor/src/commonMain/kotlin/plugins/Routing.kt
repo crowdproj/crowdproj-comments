@@ -1,40 +1,43 @@
 package com.crowdproj.comments.app.plugins
 
 import com.crowdproj.comments.app.configs.CommentsAppSettings
-import com.crowdproj.product.comments.api.v1.models.*
-import helpers.controllerHelperV1
+import com.crowdproj.comments.api.v1.models.*
+import com.crowdproj.comments.app.controllers.controllerHelperV1
+import com.crowdproj.comments.app.controllers.wsHandler
 import io.ktor.server.application.*
 import io.ktor.server.routing.*
+import io.ktor.server.websocket.*
 import kotlin.io.encoding.ExperimentalEncodingApi
-import kotlin.reflect.KClass
-
-private val clazz: KClass<*> = Application::configureRouting::class
 
 @OptIn(ExperimentalEncodingApi::class)
-fun Application.configureRouting(appConfig: CommentsAppSettings) {
-    initRest(appConfig)
-    initCors(appConfig)
+fun Application.configureRouting(appSettings: CommentsAppSettings) {
+    initRest(appSettings)
+    initCors(appSettings)
+    install(WebSockets)
     routing {
-        //trace { application.log.trace(it.buildText()) }
 
-        swagger(appConfig)
+        swagger(appSettings)
         route("v1") {
             post("create") {
-                call.controllerHelperV1<CommentCreateRequest, CommentCreateResponse>(appConfig)
+                call.controllerHelperV1<CommentCreateRequest, CommentCreateResponse>(appSettings)
             }
             post("read") {
-                call.controllerHelperV1<CommentReadRequest, CommentReadResponse>(appConfig)
+                call.controllerHelperV1<CommentReadRequest, CommentReadResponse>(appSettings)
             }
             post("update") {
-                call.controllerHelperV1<CommentUpdateRequest, CommentUpdateResponse>(appConfig)
+                call.controllerHelperV1<CommentUpdateRequest, CommentUpdateResponse>(appSettings)
             }
             post("delete") {
-                call.controllerHelperV1<CommentDeleteRequest, CommentDeleteResponse>(appConfig)
+                call.controllerHelperV1<CommentDeleteRequest, CommentDeleteResponse>(appSettings)
             }
             post("search") {
-                call.controllerHelperV1<CommentSearchRequest, CommentSearchResponse>(appConfig)
+                call.controllerHelperV1<CommentSearchRequest, CommentSearchResponse>(appSettings)
+            }
+            webSocket("ws") {
+                wsHandler(appSettings)
             }
         }
+
     }
 }
 
