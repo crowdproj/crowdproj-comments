@@ -1,9 +1,7 @@
 package com.crowdproj.comments.app.plugins
 
 import com.crowdproj.comments.app.configs.CommentsAppSettings
-import com.crowdproj.comments.api.v1.models.*
-import com.crowdproj.comments.app.controllers.controllerHelperV1
-import com.crowdproj.comments.app.controllers.wsHandler
+import com.crowdproj.comments.app.controllers.*
 import io.ktor.server.application.*
 import io.ktor.server.routing.*
 import io.ktor.server.websocket.*
@@ -19,19 +17,19 @@ fun Application.configureRouting(appSettings: CommentsAppSettings) {
         swagger(appSettings)
         route("v1") {
             post("create") {
-                call.controllerHelperV1<CommentCreateRequest, CommentCreateResponse>(appSettings)
+                call.createAd(appSettings)
             }
             post("read") {
-                call.controllerHelperV1<CommentReadRequest, CommentReadResponse>(appSettings)
+                call.readAd(appSettings)
             }
             post("update") {
-                call.controllerHelperV1<CommentUpdateRequest, CommentUpdateResponse>(appSettings)
+                call.updateAd(appSettings)
             }
             post("delete") {
-                call.controllerHelperV1<CommentDeleteRequest, CommentDeleteResponse>(appSettings)
+                call.deleteAd(appSettings)
             }
             post("search") {
-                call.controllerHelperV1<CommentSearchRequest, CommentSearchResponse>(appSettings)
+                call.searchAd(appSettings)
             }
             webSocket("ws") {
                 wsHandler(appSettings)

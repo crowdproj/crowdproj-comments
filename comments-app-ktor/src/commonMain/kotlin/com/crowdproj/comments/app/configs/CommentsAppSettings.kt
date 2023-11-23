@@ -8,7 +8,7 @@ import kotlinx.serialization.json.Json
 
 data class CommentsAppSettings(
     val json: Json = commentsApiV1Json,
-    val corSettings: CommentsCorSettings = CommentsCorSettings(),
+    override val corSettings: CommentsCorSettings = CommentsCorSettings(),
     val appUrls: List<String> = listOf(),
-    override val processor: CommentProcessor = CommentProcessor()
+    override val processor: CommentProcessor = CommentProcessor(corSettings)
 ): ICommentsAppSettings

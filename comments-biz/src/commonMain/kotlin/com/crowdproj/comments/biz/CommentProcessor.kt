@@ -8,7 +8,10 @@ import com.crowdproj.comments.common.models.CommentState
 import com.crowdproj.comments.common.models.CommentWorkMode
 import com.crowdproj.comments.stubs.CommentStub
 
-class CommentProcessor(private val settings: CommentsCorSettings = CommentsCorSettings()) {
+class CommentProcessor(
+    @Suppress("unused")
+    private val settings: CommentsCorSettings = CommentsCorSettings.NONE
+) {
     suspend fun exec(ctx: CommentContext){
         //TODO: Rewrite temporary stub solution with BIZ
         require(ctx.workMode == CommentWorkMode.STUB || ctx.command in arrayOf(CommentCommand.INIT, CommentCommand.FINISH)){

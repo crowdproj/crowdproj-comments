@@ -1,11 +1,11 @@
 package com.crowdproj.comments.common.config
 
 import com.crowdproj.comments.common.repo.ICommentRepository
+import com.crowdproj.comments.logging.common.CommentsLoggerProvider
 
 data class CommentsCorSettings(
-    val repoTest: ICommentRepository = ICommentRepository.NONE,
-    val repoStub: ICommentRepository = ICommentRepository.NONE,
-    val repoProd: ICommentRepository = ICommentRepository.NONE,
+    val repo: ICommentRepository = ICommentRepository.NONE,
+    val loggerProvider: CommentsLoggerProvider = CommentsLoggerProvider()
 ) {
     companion object {
         val NONE = CommentsCorSettings()

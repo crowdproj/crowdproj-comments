@@ -1,6 +1,7 @@
+#file: noinspection SwYamlUnresolvedReferencesInspection
 openapi: 3.0.3
 info:
-  title: 'Marketplace comments service ${VERSION_APP}'
+  title: 'Crowdproj comments service'
   description: 'Microservice for managing comments feature for any object (article, product, news, etc.)'
   contact:
     email: soulofpain.k@gmail.com

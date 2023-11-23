@@ -13,9 +13,8 @@ fun Application.initAppSettings(): CommentsAppSettings {
             ?.filter { it.isNotBlank() }
             ?: emptyList(),
         corSettings = CommentsCorSettings(
-            repoProd = ICommentRepository.NONE,//CwpAdRepoInMemory(),
-            repoTest = ICommentRepository.NONE,//CwpAdRepoInMemory(),
-            repoStub = ICommentRepository.NONE//CwpAdRepoStub(),
+            repo = ICommentRepository.NONE,
+            loggerProvider = getLoggerProviderConf()
         )
     )
 }

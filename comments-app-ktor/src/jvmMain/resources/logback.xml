@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration>
+<configuration scan="true" scanPeriod="30 seconds" debug="false">
+
+    <property name="LOGS_FB_HOSTS" value="${LOGS_FB_HOSTS:-127.0.0.1}"/>
+    <property name="LOGS_FB_PORT" value="${LOGS_FB_PORT:-24224}"/>
+    <property name="SERVICE_NAME" value="${SERVICE_NAME:-comments}"/>
+    <property name="LOG_COMMENTS_LEVEL" value="${LOG_OTUS_LEVEL:-info}"/>
+    <property name="LOG_COMMON_LEVEL" value="${LOG_COMMON_LEVEL:-error}"/>
+
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level[%marker] %logger{36} - %msg%n%mdc%n</pattern>
+        </encoder>
+    </appender>
+    <appender name="fluentd" class="ch.qos.logback.more.appenders.DataFluentAppender">
+        <tag>app.logs</tag>
+        <label>normal</label>
+        <remoteHost>${LOGS_FB_HOSTS}</remoteHost>
+        <port>${LOGS_FB_PORT}</port>
+        <maxQueueSize>20</maxQueueSize>
+
+        <encoder class="net.logstash.logback.encoder.LoggingEventCompositeJsonEncoder">
+            <providers>
+                <timestamp/>
+                <version/>
+                <pattern>
+                    <pattern>
+                        {
+                        "component": "${SERVICE_NAME}",
+                        "container-id": "${HOSTNAME}"
+                        }
+                    </pattern>
+                </pattern>
+                <message/>
+                <loggerName/>
+                <threadName/>
+                <logLevel/>
+                <logstashMarkers/>
+                <callerData/>
+                <stackTrace/>
+                <context/>
+                <mdc/>
+                <logstashMarkers/>
+                <arguments/>
+                <tags/>
+            </providers>
+        </encoder>
+    </appender>
+    <root level="${LOG_COMMON_LEVEL}">
+        <appender-ref ref="fluentd"/>
+        <appender-ref ref="STDOUT"/>
+    </root>
+    <logger name="com.crowdproj" level="${LOG_COMMENTS_LEVEL}" additivity="false">
+        <appender-ref ref="fluentd"/>
+        <appender-ref ref="STDOUT"/>
+    </logger>
+</configuration>

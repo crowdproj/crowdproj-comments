@@ -17,6 +17,11 @@ kotlin {
                 implementation(project(":comments-api-v1"))
                 implementation(project(":comments-mappers-v1"))
 
+                //logging
+                implementation(project(":comments-api-log"))
+                implementation(project(":comments-mappers-log"))
+                //implementation(project(":comments-lib-logging-common"))
+
                 // Stubs
                 implementation(project(":comments-stubs"))
 

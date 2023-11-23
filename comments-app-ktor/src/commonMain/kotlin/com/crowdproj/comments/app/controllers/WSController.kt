@@ -14,38 +14,51 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.isActive
+import kotlin.reflect.KClass
 
 val sessions = mutableSetOf<WebSocketSession>()
 
+private val cls: KClass<*> = WebSocketSession::wsHandler::class
 suspend fun WebSocketSession.wsHandler(appSettings: CommentsAppSettings) {
     sessions += this
 
     appSettings.controllerHelper(
         { command = CommentCommand.INIT },
-        { outgoing.send(Frame.Text(toTransport().encode()))}
+        { outgoing.send(Frame.Text(toTransport().encode())) },
+        cls,
+        "wsHandler-init"
     )
 
     incoming.receiveAsFlow().mapNotNull {
         val frame = it as? Frame.Text ?: return@mapNotNull
 
-        try{
+        try {
             appSettings.controllerHelper(
                 { fromTransport(frame.readText().decodeRequest()) },
                 {
                     val result = Frame.Text(toTransport().encode())
-                    if(isUpdatableCommand()){
-                        sessions.forEach {session ->
-                            if(session.isActive) session.send(result)
+                    if (isUpdatableCommand()) {
+                        sessions.forEach { session ->
+                            if (session.isActive) session.send(result)
                         }
                     } else {
                         outgoing.send(result)
                     }
-                }
+                },
+                cls,
+                "wsHandler-message"
             )
         } catch (_: ClosedReceiveChannelException) {
             sessions.clear()
-        } catch (e : Throwable) {
+        } catch (e: Throwable) {
             println("Error: ${e.message}")
         }
+
+        appSettings.controllerHelper(
+            { command = CommentCommand.FINISH },
+            { },
+            cls,
+            "wsHandler-finish",
+        )
     }.collect()
 }

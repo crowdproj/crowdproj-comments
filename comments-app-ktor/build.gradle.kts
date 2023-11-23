@@ -36,9 +36,6 @@ kotlin {
                 implementation(libs.kotlinx.serialization.core)
                 implementation(libs.kotlinx.serialization.json)
 
-//                implementation(libs.ktor.client.core)
-//                implementation(libs.ktor.client.cio)
-
                 implementation(libs.ktor.serialization.kotlinx.json)
                 implementation(libs.ktor.serialization)
                 implementation(libs.ktor.server.content.negotiation)
@@ -54,7 +51,13 @@ kotlin {
 
                 implementation(libs.uuid)
 
+                //logging
                 implementation(project(":comments-lib-logging-common"))
+                implementation(project(":comments-lib-logging-oshai"))
+                implementation(project(":comments-api-log"))
+                implementation(project(":comments-mappers-log"))
+                implementation(libs.logging.logback.more.appenders)
+                implementation(libs.logging.fluent)
 
                 implementation(project(":comments-common"))
 
@@ -80,30 +83,14 @@ kotlin {
 
         val jvmMain by getting {
             dependencies {
-                implementation(libs.logback.classic)
-                implementation(libs.logback.access)
-
                 implementation(libs.ktor.server.swagger)
-
-                implementation(libs.slf4j.api)
+                implementation(project(":comments-lib-logging-logback"))
             }
         }
 
         val jvmTest by getting {
             dependencies {
                 implementation(kotlin("test-junit"))
-            }
-        }
-
-        val linuxX64Main by getting {
-            dependencies{
-                implementation(kotlin("stdlib"))
-            }
-        }
-
-        val linuxX64Test by getting {
-            dependencies {
-                implementation(kotlin("test"))
             }
         }
     }
@@ -187,4 +174,8 @@ tasks {
         group = "build"
         dependsOn(dockerPushNativeImage)
     }
+}
+
+tasks.withType<Copy> {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }

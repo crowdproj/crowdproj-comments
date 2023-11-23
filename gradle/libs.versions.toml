@@ -12,6 +12,12 @@ coroutines = "1.7.3"
 uuid = "0.8.2"
 slf4j = "2.0.9"
 logback = "1.4.11"
+oshaiLogging = "5.1.0"
+logbackEncoder = "7.4"
+janino = "3.1.10"
+logbackKafka = "0.1.0"
+logbackMoreAppenders = "1.8.8"
+fluent = "0.3.4"
 
 [libraries]
 #KTOR Server
@@ -53,8 +59,13 @@ kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-t
 uuid = { module = "com.benasher44:uuid", version.ref = "uuid" }
 #Logging
 slf4j-api = { module = "org.slf4j:slf4j-api", version.ref = "slf4j" }
-logback-classic = { module = "ch.qos.logback:logback-classic", version.ref = "logback" }
-logback-access = { module = "ch.qos.logback:logback-access", version.ref = "logback" }
+logging-logback-classic = { module = "ch.qos.logback:logback-classic", version.ref = "logback" }
+logging-logback-encoder = { module = "net.logstash.logback:logstash-logback-encoder", version.ref = "logbackEncoder" }
+logging-logback-kafka = { module = "com.github.danielwegener:logback-kafka-appender", version.ref = "logbackKafka" }
+logging-oshai = {module = "io.github.oshai:kotlin-logging", version.ref = "oshaiLogging"}
+janino = {module = "org.codehaus.janino:janino", version.ref = "janino"}
+logging-logback-more-appenders = { module = "com.sndyuk:logback-more-appenders", version.ref = "logbackMoreAppenders" }
+logging-fluent = { module = "org.fluentd:fluent-logger", version.ref = "fluent" }
 
 [plugins]
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
