@@ -66,7 +66,7 @@ class CommentSearchStubTest {
         assertTrue(ctx.commentsResponse.isEmpty())
         assertEquals("id", ctx.errors.firstOrNull()?.field)
         assertEquals(CommentError.Group.VALIDATION, ctx.errors.firstOrNull()?.group)
-        assertEquals("validation-id", ctx.errors.firstOrNull()?.code)
+        assertEquals("validation-id-bad", ctx.errors.firstOrNull()?.code)
     }
 
     @Test

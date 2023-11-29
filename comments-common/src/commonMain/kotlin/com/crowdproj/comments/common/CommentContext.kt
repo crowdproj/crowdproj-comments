@@ -19,6 +19,12 @@ data class CommentContext(
     val commentsRequest: MutableList<Comment> = mutableListOf(),
     var commentFilterRequest: CommentFilter = CommentFilter.NONE,
 
+    var commentValidating: Comment = Comment(),
+    var commentFilterValidating: CommentFilter = CommentFilter(),
+
+    var commentValidated: Comment = Comment(),
+    var commentFilterValidated: CommentFilter = CommentFilter(),
+
     var commentResponse: Comment = Comment.NONE,
     val commentsResponse: MutableList<Comment> = mutableListOf()
 )

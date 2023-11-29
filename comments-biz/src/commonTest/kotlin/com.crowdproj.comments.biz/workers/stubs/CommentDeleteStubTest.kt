@@ -9,16 +9,16 @@ import kotlinx.coroutines.test.runTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-class CommentReadStubTest {
+class CommentDeleteStubTest {
 
     private val processor = CommentProcessor()
     val id = CommentId("666")
 
     @Test
-    fun read() = runTest {
+    fun delete() = runTest {
 
         val ctx = CommentContext(
-            command = CommentCommand.READ,
+            command = CommentCommand.DELETE,
             state = CommentState.NONE,
             workMode = CommentWorkMode.STUB,
             stubCase = CommentStubs.SUCCESS,
@@ -26,10 +26,10 @@ class CommentReadStubTest {
                 id = id,
             ),
         )
-
         processor.exec(ctx)
+
         assertEquals(id, ctx.commentResponse.id)
-        with (CommentStub.get()) {
+        with(CommentStub.get()) {
             assertEquals(objectType, ctx.commentResponse.objectType)
             assertEquals(objectId, ctx.commentResponse.objectId)
             assertEquals(userId, ctx.commentResponse.userId)
@@ -41,7 +41,7 @@ class CommentReadStubTest {
     @Test
     fun badId() = runTest {
         val ctx = CommentContext(
-            command = CommentCommand.READ,
+            command = CommentCommand.DELETE,
             state = CommentState.NONE,
             workMode = CommentWorkMode.STUB,
             stubCase = CommentStubs.BAD_ID,
@@ -51,13 +51,13 @@ class CommentReadStubTest {
         assertEquals(Comment(), ctx.commentResponse)
         assertEquals("id", ctx.errors.firstOrNull()?.field)
         assertEquals(CommentError.Group.VALIDATION, ctx.errors.firstOrNull()?.group)
-        assertEquals("validation-id", ctx.errors.firstOrNull()?.code)
+        assertEquals("validation-id-bad", ctx.errors.firstOrNull()?.code)
     }
 
     @Test
     fun notFound() = runTest {
         val ctx = CommentContext(
-            command = CommentCommand.READ,
+            command = CommentCommand.DELETE,
             state = CommentState.NONE,
             workMode = CommentWorkMode.STUB,
             stubCase = CommentStubs.NOT_FOUND,
@@ -74,7 +74,7 @@ class CommentReadStubTest {
     @Test
     fun databaseError() = runTest {
         val ctx = CommentContext(
-            command = CommentCommand.READ,
+            command = CommentCommand.DELETE,
             state = CommentState.NONE,
             workMode = CommentWorkMode.STUB,
             stubCase = CommentStubs.DB_ERROR,
