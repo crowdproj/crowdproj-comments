@@ -66,7 +66,7 @@ private fun MutableList<CommentError>.toTransportErrors() = this
 
 private fun CommentError.toTransportError() = Error(
     code = code.takeIf { it.isNotBlank() },
-    group = group.takeIf { it.isNotBlank() },
+    group = group.takeIf { it != CommentError.Group.NONE }?.alias,
     field = field.takeIf { it.isNotBlank() },
     title = message.takeIf { it.isNotBlank() },
     description = null

@@ -16,6 +16,7 @@ kotlin {
 
                 implementation(project(":comments-common"))
                 implementation(project(":comments-stubs"))
+                implementation(libs.crowdproj.cor)
             }
         }
         val commonTest by getting {

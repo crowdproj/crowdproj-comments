@@ -18,6 +18,7 @@ janino = "3.1.10"
 logbackKafka = "0.1.0"
 logbackMoreAppenders = "1.8.8"
 fluent = "0.3.4"
+crowdprojCoR = "0.5.7"
 
 [libraries]
 #KTOR Server
@@ -66,6 +67,8 @@ logging-oshai = {module = "io.github.oshai:kotlin-logging", version.ref = "oshai
 janino = {module = "org.codehaus.janino:janino", version.ref = "janino"}
 logging-logback-more-appenders = { module = "com.sndyuk:logback-more-appenders", version.ref = "logbackMoreAppenders" }
 logging-fluent = { module = "org.fluentd:fluent-logger", version.ref = "fluent" }
+#Chain of Responsability
+crowdproj-cor = { module = "com.crowdproj:kotlin-cor", version.ref = "crowdprojCoR" }
 
 [plugins]
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }

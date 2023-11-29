@@ -2,6 +2,7 @@ package com.crowdproj.comments.app.common
 
 import com.crowdproj.comments.api.v1.models.*
 import com.crowdproj.comments.biz.CommentProcessor
+import com.crowdproj.comments.common.config.CommentsCorSettings
 import com.crowdproj.comments.mappers.v1.fromTransport
 import com.crowdproj.comments.mappers.v1.toTransport
 import kotlinx.coroutines.test.runTest
@@ -25,6 +26,7 @@ class ControllerTest {
 
     private val appSettings: ICommentsAppSettings = object : ICommentsAppSettings{
         override val processor: CommentProcessor = CommentProcessor()
+        override val corSettings: CommentsCorSettings = CommentsCorSettings()
     }
 
     class TestApplicationCall(private val request: IRequest) {
@@ -40,7 +42,9 @@ class ControllerTest {
     private suspend fun TestApplicationCall.createCommentKtor(appSettings: ICommentsAppSettings) {
         val resp = appSettings.controllerHelper(
             { fromTransport(receive<CommentCreateRequest>()) },
-            { toTransport() }
+            { toTransport() },
+            this::class,
+            "123"
         )
         respond(resp)
     }

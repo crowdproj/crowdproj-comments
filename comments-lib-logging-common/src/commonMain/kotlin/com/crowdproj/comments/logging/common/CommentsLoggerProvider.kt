@@ -3,7 +3,6 @@ package com.crowdproj.comments.logging.common
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
 
-@Suppress("unused")
 class CommentsLoggerProvider(
     private val provider: (String) -> ICommentsLoggerWrapper = { ICommentsLoggerWrapper.DEFAULT}
 ) {

@@ -1,3 +1,5 @@
+package com.crowdproj.comments.logging.oshai
+
 import kotlinx.serialization.*
 import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.encoding.Decoder

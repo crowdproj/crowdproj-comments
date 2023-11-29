@@ -6,7 +6,7 @@ import com.crowdproj.comments.common.models.CommentState
 
 fun Throwable.asCommentError(
     code: String = "unknown",
-    group: String = "exceptions",
+    group: CommentError.Group = CommentError.Group.NONE,
     message: String = this.message ?: "",
 ) = CommentError(
     code = code,

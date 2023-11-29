@@ -1,6 +1,5 @@
 package com.crowdproj.comments.logging.oshai
 
-import DynamicLookupSerializer
 import com.crowdproj.comments.logging.common.ICommentsLoggerWrapper
 import com.crowdproj.comments.logging.common.LogLevel
 import io.github.oshai.kotlinlogging.KLogger

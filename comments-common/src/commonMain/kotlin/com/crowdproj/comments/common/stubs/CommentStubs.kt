@@ -5,7 +5,5 @@ enum class CommentStubs {
     SUCCESS,
     NOT_FOUND,
     BAD_ID,
-    BAD_NAME,
-    BAD_DESCRIPTION,
     DB_ERROR
 }

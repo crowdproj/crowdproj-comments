@@ -51,6 +51,9 @@
         <appender-ref ref="fluentd"/>
         <appender-ref ref="STDOUT"/>
     </root>
+    <logger name="Application" level="INFO">
+        <appender-ref ref="STDOUT"/>
+    </logger>
     <logger name="com.crowdproj" level="${LOG_COMMENTS_LEVEL}" additivity="false">
         <appender-ref ref="fluentd"/>
         <appender-ref ref="STDOUT"/>

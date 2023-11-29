@@ -1,4 +1,4 @@
-package com.crowdproj.comments.api.v1.com.crowdproj.comments.api.v1
+package com.crowdproj.comments.api.v1
 
 import com.crowdproj.comments.api.v1.models.*
 import kotlinx.serialization.json.Json
