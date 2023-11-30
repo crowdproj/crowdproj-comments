@@ -30,7 +30,7 @@ class CommentProcessor(
                     worker("Copy fields to commentsValidating")
                     { commentValidating = commentRequest.deepCopy() }
                     worker("Cleaning id")
-                    { commentValidating.id = CommentId.NONE }
+                    { commentValidating.id = CommentId(commentValidating.id.asString().trim()) }
                     worker("Clean object id")
                     { commentValidating.objectId = CommentObjectId(commentValidating.objectId.asString().trim()) }
                     worker("Clean user id")
@@ -38,6 +38,7 @@ class CommentProcessor(
                     worker("Clean content")
                     { commentValidating.content = commentValidating.content.trim() }
 
+                    validateCommentIdEmpty("Validate id is empty")
                     validateObjectIdNotEmpty("Validate objectId is not empty")
                     validateObjectIdProperFormat("Validate objectId is proper format")
                     validateUserIdNotEmpty("Validate userId is not empty")

@@ -10,9 +10,9 @@ class BusinessValidationUpdateTest {
 
     @Test fun validationIdsCorrect() = validationIdsCorrect(command, processor)
     @Test fun validationIdsTrim() = validationIdsTrim(command, processor)
-    @Test fun validationIdEmpty() = validationIdEmpty(command, processor)
-    @Test fun validationObjectIdEmpty() = validationObjectIdEmpty(command, processor)
-    @Test fun validationUserIdEmpty() = validationUserIdEmpty(command, processor)
+    @Test fun validationIdEmpty() = validationIdNotEmpty(command, processor)
+    @Test fun validationObjectIdEmpty() = validationObjectIdNotEmpty(command, processor)
+    @Test fun validationUserIdEmpty() = validationUserIdNotEmpty(command, processor)
     @Test fun validationBadIdFormat() = validationBadIdFormat(command, processor)
     @Test fun validationBadObjectIdFormat() = validationBadObjectIdFormat(command, processor)
     @Test fun validationBadUserIdFormat() = validationBadUserIdFormat(command, processor)

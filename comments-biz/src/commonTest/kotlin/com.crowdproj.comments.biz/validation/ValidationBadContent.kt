@@ -11,13 +11,13 @@ import kotlin.test.assertNotEquals
 
 private val stub = CommentStub.get()
 
-fun validationContentCorrect(command: CommentCommand, processor: CommentProcessor) = runTest {
+fun validationContentCorrect(command: CommentCommand, processor: CommentProcessor, commendIdEmpty: Boolean = false) = runTest {
     val ctx = CommentContext(
         command = command,
         state = CommentState.NONE,
         workMode = CommentWorkMode.TEST,
         commentRequest = Comment(
-            id = stub.id,
+            id = if(commendIdEmpty) CommentId.NONE else stub.id,
             objectId = stub.objectId,
             userId = stub.userId,
             content = "abc",
@@ -30,13 +30,13 @@ fun validationContentCorrect(command: CommentCommand, processor: CommentProcesso
     assertEquals("abc", ctx.commentValidated.content)
 }
 
-fun validationContentTrim(command: CommentCommand, processor: CommentProcessor) = runTest {
+fun validationContentTrim(command: CommentCommand, processor: CommentProcessor, commendIdEmpty: Boolean = false) = runTest {
     val ctx = CommentContext(
         command = command,
         state = CommentState.NONE,
         workMode = CommentWorkMode.TEST,
         commentRequest = Comment(
-            id = stub.id,
+            id = if(commendIdEmpty) CommentId.NONE else stub.id,
             objectId = stub.objectId,
             userId = stub.userId,
             content = " \n\t abc \n\t ",
@@ -49,13 +49,13 @@ fun validationContentTrim(command: CommentCommand, processor: CommentProcessor) 
     assertEquals("abc", ctx.commentValidated.content)
 }
 
-fun validationContentEmpty(command: CommentCommand, processor: CommentProcessor) = runTest {
+fun validationContentEmpty(command: CommentCommand, processor: CommentProcessor, commendIdEmpty: Boolean = false) = runTest {
     val ctx = CommentContext(
         command = command,
         state = CommentState.NONE,
         workMode = CommentWorkMode.TEST,
         commentRequest = Comment(
-            id = stub.id,
+            id = if(commendIdEmpty) CommentId.NONE else stub.id,
             objectId = stub.objectId,
             userId = stub.userId,
             content = "",
@@ -72,13 +72,13 @@ fun validationContentEmpty(command: CommentCommand, processor: CommentProcessor)
     }
 }
 
-fun validationContentPlainSymbols(command: CommentCommand, processor: CommentProcessor) = runTest {
+fun validationContentPlainSymbols(command: CommentCommand, processor: CommentProcessor, commendIdEmpty: Boolean = false) = runTest {
     val ctx = CommentContext(
         command = command,
         state = CommentState.NONE,
         workMode = CommentWorkMode.TEST,
         commentRequest = Comment(
-            id = stub.id,
+            id = if(commendIdEmpty) CommentId.NONE else stub.id,
             objectId = stub.objectId,
             userId = stub.userId,
             content = "@#\$%^&*(),.{}",
@@ -95,13 +95,13 @@ fun validationContentPlainSymbols(command: CommentCommand, processor: CommentPro
     }
 }
 
-fun validationBadContentType(command: CommentCommand, processor: CommentProcessor) = runTest {
+fun validationBadContentType(command: CommentCommand, processor: CommentProcessor, commendIdEmpty: Boolean = false) = runTest {
     val ctx = CommentContext(
         command = command,
         state = CommentState.NONE,
         workMode = CommentWorkMode.TEST,
         commentRequest = Comment(
-            id = stub.id,
+            id = if(commendIdEmpty) CommentId.NONE else stub.id,
             objectId = stub.objectId,
             userId = stub.userId,
             content = "abc",

@@ -8,13 +8,15 @@ import kotlin.test.assertContains
 import kotlin.test.assertEquals
 import kotlin.test.assertNotEquals
 
-fun validationIdsCorrect(command: CommentCommand, processor: CommentProcessor) = runTest {
+fun validationIdsCorrect(command: CommentCommand, processor: CommentProcessor, commendIdEmpty: Boolean = false) = runTest {
     val ctx = CommentContext(
         command = command,
         state = CommentState.NONE,
         workMode = CommentWorkMode.TEST,
         commentRequest = Comment(
-            id = CommentId("123-234-abc-ABC"),
+            id = CommentId(
+                if(commendIdEmpty) "" else "123-234-abc-ABC"
+            ),
             objectId = CommentObjectId("123-234-abc-ABC"),
             userId = CommentUserId("123-234-abc-ABC"),
             content = "abc",
@@ -26,13 +28,13 @@ fun validationIdsCorrect(command: CommentCommand, processor: CommentProcessor) =
     assertNotEquals(CommentState.FAILING, ctx.state)
 }
 
-fun validationIdsTrim(command: CommentCommand, processor: CommentProcessor) = runTest {
+fun validationIdsTrim(command: CommentCommand, processor: CommentProcessor, commendIdEmpty: Boolean = false) = runTest {
     val ctx = CommentContext(
         command = command,
         state = CommentState.NONE,
         workMode = CommentWorkMode.TEST,
         commentRequest = Comment(
-            id = CommentId(" \n\t 123-234-abc-ABC \n\t "),
+            id = CommentId(" \n\t ${if(commendIdEmpty) "" else "123-234-abc-ABC"} \n\t "),
             objectId = CommentObjectId(" \n\t 123-234-abc-ABC \n\t "),
             userId = CommentUserId(" \n\t 123-234-abc-ABC \n\t "),
             content = "abc",
@@ -45,6 +47,30 @@ fun validationIdsTrim(command: CommentCommand, processor: CommentProcessor) = ru
 }
 
 fun validationIdEmpty(command: CommentCommand, processor: CommentProcessor) = runTest {
+    CommentContext(
+        command = command,
+        state = CommentState.NONE,
+        workMode = CommentWorkMode.TEST,
+        commentRequest = Comment(
+            id = CommentId("123-234-abc-ABC"),
+            objectId = CommentObjectId("123-234-abc-ABC"),
+            userId = CommentUserId("123-234-abc-ABC"),
+            content = "abc",
+            contentType = CommentContentType.PLAIN,
+        )
+    ).also { ctx ->
+        processor.exec(ctx)
+        assertEquals(1, ctx.errors.size)
+        assertEquals(CommentState.FAILING, ctx.state)
+        with(ctx.errors.firstOrNull()) {
+            assertEquals("id", this?.field)
+            assertEquals(CommentError.Group.VALIDATION , this?.group)
+            assertContains(this?.message ?: "", "id")
+        }
+    }
+}
+
+fun validationIdNotEmpty(command: CommentCommand, processor: CommentProcessor) = runTest {
     CommentContext(
         command = command,
         state = CommentState.NONE,
@@ -68,13 +94,13 @@ fun validationIdEmpty(command: CommentCommand, processor: CommentProcessor) = ru
     }
 }
 
-fun validationObjectIdEmpty(command: CommentCommand, processor: CommentProcessor) = runTest {
+fun validationObjectIdNotEmpty(command: CommentCommand, processor: CommentProcessor, commendIdEmpty: Boolean = false) = runTest {
     CommentContext(
         command = command,
         state = CommentState.NONE,
         workMode = CommentWorkMode.TEST,
         commentRequest = Comment(
-            id = CommentId("123-234-abc-ABC"),
+            id = CommentId(if(commendIdEmpty) "" else "123-234-abc-ABC"),
             objectId = CommentObjectId(""),
             userId = CommentUserId("123-234-abc-ABC"),
             content = "abc",
@@ -92,13 +118,13 @@ fun validationObjectIdEmpty(command: CommentCommand, processor: CommentProcessor
     }
 }
 
-fun validationUserIdEmpty(command: CommentCommand, processor: CommentProcessor) = runTest {
+fun validationUserIdNotEmpty(command: CommentCommand, processor: CommentProcessor, commendIdEmpty: Boolean = false) = runTest {
     CommentContext(
         command = command,
         state = CommentState.NONE,
         workMode = CommentWorkMode.TEST,
         commentRequest = Comment(
-            id = CommentId("123-234-abc-ABC"),
+            id = CommentId(if(commendIdEmpty) "" else "123-234-abc-ABC"),
             objectId = CommentObjectId("123-234-abc-ABC"),
             userId = CommentUserId(""),
             content = "abc",
@@ -140,13 +166,13 @@ fun validationBadIdFormat(command: CommentCommand, processor: CommentProcessor) 
     }
 }
 
-fun validationBadObjectIdFormat(command: CommentCommand, processor: CommentProcessor) = runTest {
+fun validationBadObjectIdFormat(command: CommentCommand, processor: CommentProcessor, commendIdEmpty: Boolean = false) = runTest {
     CommentContext(
         command = command,
         state = CommentState.NONE,
         workMode = CommentWorkMode.TEST,
         commentRequest = Comment(
-            id = CommentId("123-234-abc-ABC"),
+            id = CommentId(if(commendIdEmpty) "" else "123-234-abc-ABC"),
             objectId = CommentObjectId("!@#\$%^&*(),.{}"),
             userId = CommentUserId("123-234-abc-ABC"),
             content = "abc",
@@ -164,13 +190,13 @@ fun validationBadObjectIdFormat(command: CommentCommand, processor: CommentProce
     }
 }
 
-fun validationBadUserIdFormat(command: CommentCommand, processor: CommentProcessor) = runTest {
+fun validationBadUserIdFormat(command: CommentCommand, processor: CommentProcessor, commendIdEmpty: Boolean = false) = runTest {
     CommentContext(
         command = command,
         state = CommentState.NONE,
         workMode = CommentWorkMode.TEST,
         commentRequest = Comment(
-            id = CommentId("123-234-abc-ABC"),
+            id = CommentId(if(commendIdEmpty) "" else "123-234-abc-ABC"),
             objectId = CommentObjectId("123-234-abc-ABC"),
             userId = CommentUserId("!@#\$%^&*(),.{}"),
             content = "abc",

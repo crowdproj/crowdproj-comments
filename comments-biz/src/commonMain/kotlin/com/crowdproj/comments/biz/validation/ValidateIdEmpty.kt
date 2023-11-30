@@ -48,3 +48,17 @@ fun CorChainDsl<CommentContext>.validateUserIdNotEmpty(title: String) = worker {
         )
     }
 }
+
+fun CorChainDsl<CommentContext>.validateCommentIdEmpty(title: String) = worker {
+    this.title = title
+    on { commentValidating.id.asString().isNotEmpty() }
+    handle {
+        fail(
+            errorValidation(
+                field = "id",
+                violationCode = "empty",
+                description = "field must empty",
+            )
+        )
+    }
+}

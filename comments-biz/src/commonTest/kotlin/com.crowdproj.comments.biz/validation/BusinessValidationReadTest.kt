@@ -10,6 +10,6 @@ class BusinessValidationReadTest {
 
     @Test fun validationIdsCorrect() = validationIdsCorrect(command, processor)
     @Test fun validationIdsTrim() = validationIdsTrim(command, processor)
-    @Test fun validationIdEmpty() = validationIdEmpty(command, processor)
+    @Test fun validationIdEmpty() = validationIdNotEmpty(command, processor)
     @Test fun validationBadIdFormat() = validationBadIdFormat(command, processor)
 }
