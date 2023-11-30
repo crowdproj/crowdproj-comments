@@ -17,19 +17,19 @@ fun Application.configureRouting(appSettings: CommentsAppSettings) {
         swagger(appSettings)
         route("v1") {
             post("create") {
-                call.createAd(appSettings)
+                call.createComment(appSettings)
             }
             post("read") {
-                call.readAd(appSettings)
+                call.readComment(appSettings)
             }
             post("update") {
-                call.updateAd(appSettings)
+                call.updateComment(appSettings)
             }
             post("delete") {
-                call.deleteAd(appSettings)
+                call.deleteComment(appSettings)
             }
             post("search") {
-                call.searchAd(appSettings)
+                call.searchComment(appSettings)
             }
             webSocket("ws") {
                 wsHandler(appSettings)
