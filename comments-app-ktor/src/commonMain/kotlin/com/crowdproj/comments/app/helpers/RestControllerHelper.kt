@@ -14,11 +14,11 @@ import io.ktor.server.plugins.contentnegotiation.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.utils.io.charsets.*
-import kotlin.reflect.KClass
+import kotlin.reflect.KFunction
 
 suspend inline fun <reified Rq : ICommentRequest, reified Rs : ICommentResponse> ApplicationCall.processV1(
     appSettings: CommentsAppSettings,
-    cls: KClass<*>,
+    cls: KFunction<*>,
     logId: String
 ) {
     val endpoint: String = this.request.local.localAddress

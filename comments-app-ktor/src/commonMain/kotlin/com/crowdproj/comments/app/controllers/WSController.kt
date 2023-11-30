@@ -14,11 +14,11 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.isActive
-import kotlin.reflect.KClass
+import kotlin.reflect.KFunction
 
 val sessions = mutableSetOf<WebSocketSession>()
 
-private val cls: KClass<*> = WebSocketSession::wsHandler::class
+private val cls: KFunction<*> = WebSocketSession::wsHandler
 suspend fun WebSocketSession.wsHandler(appSettings: CommentsAppSettings) {
     sessions += this
 
