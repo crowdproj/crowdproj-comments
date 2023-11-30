@@ -29,7 +29,7 @@ fun errorValidation(
      */
     violationCode: String,
     description: String,
-    level: CommentError.Level = CommentError.Level.ERROR,
+    level: CommentError.Level = CommentError.Level.INFO,
 ) = CommentError(
     code = "validation-$field-$violationCode",
     field = field,

@@ -27,21 +27,16 @@ class CommentProcessor(
                     stubNoCase("Error: wrong stub case")
                 }
                 validation {
-                    worker("Copy fields to commentsValidating") {
-                        commentValidating = commentRequest.deepCopy()
-                    }
-                    worker("Cleaning id") {
-                        commentValidating.id = CommentId.NONE
-                    }
-                    worker("Clean object id") {
-                        commentValidating.objectId = CommentObjectId(commentValidating.objectId.asString().trim())
-                    }
-                    worker("Clean user id") {
-                        commentValidating.userId = CommentUserId(commentValidating.userId.asString().trim())
-                    }
-                    worker("Clean content") {
-                        commentValidating.content = commentValidating.content.trim()
-                    }
+                    worker("Copy fields to commentsValidating")
+                    { commentValidating = commentRequest.deepCopy() }
+                    worker("Cleaning id")
+                    { commentValidating.id = CommentId.NONE }
+                    worker("Clean object id")
+                    { commentValidating.objectId = CommentObjectId(commentValidating.objectId.asString().trim()) }
+                    worker("Clean user id")
+                    { commentValidating.userId = CommentUserId(commentValidating.userId.asString().trim()) }
+                    worker("Clean content")
+                    { commentValidating.content = commentValidating.content.trim() }
 
                     validateObjectIdNotEmpty("Validate objectId is not empty")
                     validateObjectIdProperFormat("Validate objectId is proper format")
@@ -63,12 +58,10 @@ class CommentProcessor(
                     stubNoCase("Error: wrong stub case")
                 }
                 validation {
-                    worker("Copy fields to commentsValidating") {
-                        commentValidating = commentRequest.deepCopy()
-                    }
-                    worker("Cleaning id") {
-                        commentValidating.id = CommentId(commentValidating.id.asString().trim())
-                    }
+                    worker("Copy fields to commentsValidating")
+                    { commentValidating = commentRequest.deepCopy() }
+                    worker("Cleaning id")
+                    { commentValidating.id = CommentId(commentValidating.id.asString().trim()) }
                     validateCommentIdNotEmpty("Validate id is not empty")
                     validateCommentIdProperFormat("Validate id is proper format")
 
@@ -84,21 +77,16 @@ class CommentProcessor(
                     stubNoCase("Error: wrong stub case")
                 }
                 validation {
-                    worker("Copy fields to commentsValidating") {
-                        commentValidating = commentRequest.deepCopy()
-                    }
-                    worker("Cleaning id") {
-                        commentValidating.id = CommentId(commentValidating.id.asString().trim())
-                    }
-                    worker("Clean object id") {
-                        commentValidating.objectId = CommentObjectId(commentValidating.objectId.asString().trim())
-                    }
-                    worker("Clean user id") {
-                        commentValidating.userId = CommentUserId(commentValidating.userId.asString().trim())
-                    }
-                    worker("Clean content") {
-                        commentValidating.content = commentValidating.content.trim()
-                    }
+                    worker("Copy fields to commentsValidating")
+                    { commentValidating = commentRequest.deepCopy() }
+                    worker("Cleaning id")
+                    { commentValidating.id = CommentId(commentValidating.id.asString().trim()) }
+                    worker("Clean object id")
+                    { commentValidating.objectId = CommentObjectId(commentValidating.objectId.asString().trim()) }
+                    worker("Clean user id")
+                    { commentValidating.userId = CommentUserId(commentValidating.userId.asString().trim()) }
+                    worker("Clean content")
+                    { commentValidating.content = commentValidating.content.trim() }
                     validateCommentIdNotEmpty("Validate id is not empty")
                     validateCommentIdProperFormat("Validate id is proper format")
                     validateObjectIdNotEmpty("Validate objectId is not empty")
@@ -121,12 +109,10 @@ class CommentProcessor(
                     stubNoCase("Error: wrong stub case")
                 }
                 validation {
-                    worker("Copy fields to commentsValidating") {
-                        commentValidating = commentRequest.deepCopy()
-                    }
-                    worker("Cleaning id") {
-                        commentValidating.id = CommentId(commentValidating.id.asString().trim())
-                    }
+                    worker("Copy fields to commentsValidating")
+                    { commentValidating = commentRequest.deepCopy() }
+                    worker("Cleaning id")
+                    { commentValidating.id = CommentId(commentValidating.id.asString().trim()) }
                     validateCommentIdNotEmpty("Validate id is not empty")
                     validateCommentIdProperFormat("Validate id is proper format")
 
@@ -142,15 +128,12 @@ class CommentProcessor(
                     stubNoCase("Error: wrong stub case")
                 }
                 validation {
-                    worker("Copy fields to commentsValidating") {
-                        commentFilterValidating = commentFilterRequest.copy()
-                    }
-                    worker("Clean object id") {
-                        commentFilterValidating.objectId = CommentObjectId(commentFilterValidating.objectId.asString().trim())
-                    }
-                    worker("Clean user id") {
-                        commentFilterValidating.userId = CommentUserId(commentFilterValidating.userId.asString().trim())
-                    }
+                    worker("Copy fields to commentsValidating")
+                    { commentFilterValidating = commentFilterRequest.copy() }
+                    worker("Clean object id")
+                    { commentFilterValidating.objectId = CommentObjectId(commentFilterValidating.objectId.asString().trim()) }
+                    worker("Clean user id")
+                    { commentFilterValidating.userId = CommentUserId(commentFilterValidating.userId.asString().trim()) }
                     validateCommentFilter("Validate filter")
 
                     finishCommentFilterValidation("Finish validation")
