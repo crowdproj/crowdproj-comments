@@ -5,6 +5,8 @@ plugins {
 kotlin {
     jvm { }
     linuxX64 { }
+    linuxArm64 {}
+
 
     sourceSets {
         val commonMain by getting {

@@ -25,6 +25,7 @@ val embeddings = layout.buildDirectory.dir("generate-resources/main/src/commonMa
 kotlin {
     jvm { withJava() }
     linuxX64 { }
+    linuxArm64 {}
 
     sourceSets {
 

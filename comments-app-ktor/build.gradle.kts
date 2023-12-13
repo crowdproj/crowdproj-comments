@@ -26,6 +26,14 @@ kotlin {
             }
         }
     }
+    linuxArm64 {
+        binaries {
+            executable {
+                baseName = project.name
+                entryPoint = "com.crowdproj.comments.app.main"
+            }
+        }
+    }
 
     sourceSets {
         val commonMain by getting {

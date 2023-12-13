@@ -7,6 +7,7 @@ plugins {
 kotlin {
     jvm { }
     linuxX64 { }
+    linuxArm64 { }
 
     sourceSets {
 

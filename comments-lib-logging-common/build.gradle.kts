@@ -7,6 +7,7 @@ version = rootProject.version
 kotlin {
     jvm { withJava() }
     linuxX64 { }
+    linuxArm64 {}
 
     sourceSets {
 
