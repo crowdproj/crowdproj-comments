@@ -24,4 +24,4 @@ suspend fun ApplicationCall.deleteComment(appSettings: CommentsAppSettings) =
 
 private val clSearch: KFunction<*> = ApplicationCall::searchComment
 suspend fun ApplicationCall.searchComment(appSettings: CommentsAppSettings) =
-    processV1<CommentSearchRequest, CommentSearchResponse>(appSettings, clSearch, "searchComment")
+    processV1<CommentSearchRequest, CommentSearchResponse>(appSettings, clSearch, "searchComments")

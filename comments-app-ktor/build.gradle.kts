@@ -18,18 +18,12 @@ kotlin {
     jvm {
         withJava()
     }
-    linuxX64 {
-        binaries {
+    listOf(
+        linuxX64 {},
+        linuxArm64 {}
+    ).forEach {
+        it.binaries {
             executable {
-                baseName = project.name
-                entryPoint = "com.crowdproj.comments.app.main"
-            }
-        }
-    }
-    linuxArm64 {
-        binaries {
-            executable {
-                baseName = project.name
                 entryPoint = "com.crowdproj.comments.app.main"
             }
         }
@@ -74,6 +68,10 @@ kotlin {
                 implementation(project(":comments-biz"))
                 implementation(project(":comments-app-common"))
                 implementation(project(":comments-swagger"))
+
+                //repo
+                implementation(project(":comments-repo-inmemory"))
+                implementation(project(":comments-repo-stubs"))
             }
         }
 
@@ -81,6 +79,8 @@ kotlin {
             dependencies {
                 implementation(kotlin("test-common"))
                 implementation(kotlin("test-annotations-common"))
+
+                implementation(project(":comments-stubs"))
 
                 implementation(libs.ktor.server.test.host)
                 implementation(libs.ktor.client.content.negotiation)
@@ -93,6 +93,7 @@ kotlin {
             dependencies {
                 implementation(libs.ktor.server.swagger)
                 implementation(project(":comments-lib-logging-logback"))
+                implementation(project(":comments-repo-cassandra"))
             }
         }
 

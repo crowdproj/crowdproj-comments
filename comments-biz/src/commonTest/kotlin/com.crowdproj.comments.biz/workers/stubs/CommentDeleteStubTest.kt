@@ -4,7 +4,7 @@ import com.crowdproj.comments.biz.CommentProcessor
 import com.crowdproj.comments.common.CommentContext
 import com.crowdproj.comments.common.models.*
 import com.crowdproj.comments.common.stubs.CommentStubs
-import com.crowdproj.comments.stubs.CommentStub
+import com.crowdproj.comments.stubs.CommentsStub
 import kotlinx.coroutines.test.runTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -29,7 +29,7 @@ class CommentDeleteStubTest {
         processor.exec(ctx)
 
         assertEquals(id, ctx.commentResponse.id)
-        with(CommentStub.get()) {
+        with(CommentsStub.get()) {
             assertEquals(objectType, ctx.commentResponse.objectType)
             assertEquals(objectId, ctx.commentResponse.objectId)
             assertEquals(userId, ctx.commentResponse.userId)

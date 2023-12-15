@@ -7,7 +7,7 @@ ktor:
     - resources
   application:
     modules:
-      - com.crowdproj.comments.app.ApplicationKt.module
+      - com.crowdproj.comments.app.ApplicationJvmKt.moduleJvm
   logger: kmp
   urls:
     - "http://127.0.0.1:8080/"

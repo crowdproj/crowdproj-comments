@@ -9,11 +9,7 @@ import kotlin.io.encoding.ExperimentalEncodingApi
 
 @OptIn(ExperimentalEncodingApi::class)
 fun Application.configureRouting(appSettings: CommentsAppSettings) {
-    initRest(appSettings)
-    initCors(appSettings)
-    install(WebSockets)
     routing {
-
         swagger(appSettings)
         route("v1") {
             post("create") {
@@ -35,7 +31,6 @@ fun Application.configureRouting(appSettings: CommentsAppSettings) {
                 wsHandler(appSettings)
             }
         }
-
     }
 }
 

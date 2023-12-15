@@ -25,7 +25,7 @@ private fun CommentContext.fromTransport(request: CommentCreateRequest) {
 
 private fun CommentContext.fromTransport(request: CommentReadRequest) {
     command = CommentCommand.READ
-    request.comment?.id.toCommentId()
+    commentRequest.id = request.comment?.id.toCommentId()
 }
 
 private fun CommentContext.fromTransport(request: CommentUpdateRequest) {

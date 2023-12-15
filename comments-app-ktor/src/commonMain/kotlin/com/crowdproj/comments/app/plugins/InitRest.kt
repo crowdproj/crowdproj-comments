@@ -8,6 +8,7 @@ import io.ktor.server.plugins.autohead.*
 import io.ktor.server.plugins.callid.*
 import io.ktor.server.plugins.contentnegotiation.*
 import io.ktor.server.routing.*
+import io.ktor.server.websocket.*
 
 fun Application.initRest(appConfig: CommentsAppSettings) {
     install(Routing)
@@ -22,4 +23,5 @@ fun Application.initRest(appConfig: CommentsAppSettings) {
     install(ContentNegotiation) {
         json(appConfig.json)
     }
+    install(WebSockets)
 }
