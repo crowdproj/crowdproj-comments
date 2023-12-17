@@ -1,14 +1,14 @@
 ktor:
-  development: false
+  development: true
   deployment:
-    port: "$PORT:8080"
-  #  watch:
-  #    - classes
-  #    - resources
+    port: 8080
+  watch:
+    - classes
+    - resources
   application:
     modules:
       - com.crowdproj.comments.app.ApplicationKt.module
+  logger: kmp
   urls:
-    - "$APP_URL:http://0.0.0.0:8080/"
-    - "$APP_URL_1:"
-    - "$APP_URL_2:"
+    - "http://127.0.0.1:8080/"
+    - "http://0.0.0.0:8080/"

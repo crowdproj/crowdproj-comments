@@ -1,1 +1,0 @@
-package ru.crowdproj.comments.app.common

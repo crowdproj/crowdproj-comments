@@ -1,0 +1,104 @@
+openapi: 3.0.4
+info:
+  title: Crowdproj comments log models
+  description: Log models for logging services of crowdproj comments
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  version: 1.0.0
+paths: {}
+
+components:
+  schemas:
+    CommonLogModel:
+      title: Common log model
+      description: Common log model for all microservices
+      type: object
+      properties:
+        messageTime:
+          type: string
+        logId:
+          type: string
+        source:
+          type: string
+        comment:
+          $ref: '#/components/schemas/CommentLogModel'
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/ErrorLogModel'
+
+    CommentLogModel:
+      title: Log model for comments microservice
+      type: object
+      properties:
+        requestId:
+          type: string
+        operation:
+          type: string
+          enum:
+            - create
+            - read
+            - update
+            - delete
+            - search
+            - init
+            - finish
+        requestComment:
+          $ref: '#/components/schemas/CommentLog'
+        requestsComment:
+          type: array
+          items:
+            $ref: '#/components/schemas/CommentLog'
+        requestFilter:
+          $ref: '#/components/schemas/CommentFilterLog'
+        responseComment:
+          $ref: '#/components/schemas/CommentLog'
+        responseComments:
+          type: array
+          items:
+            $ref: '#/components/schemas/CommentLog'
+
+    ErrorLogModel:
+      title: Log model for error
+      type: object
+      properties:
+        message:
+          type: string
+        field:
+          type: string
+        code:
+          type: string
+        level:
+          type: string
+
+    CommentLog:
+      title: Log model for comment
+      type: object
+      properties:
+        id:
+          type: string
+        objectType:
+          type: string
+        objectId:
+          type: string
+        userId:
+          type: string
+        contentType:
+          type: string
+        permissions:
+          type: array
+          uniqueItems: true
+          items:
+            type: string
+
+    CommentFilterLog:
+      title: Log model for filter
+      properties:
+        objectType:
+          type: string
+        objectId:
+          type: string
+        userId:
+          type: string
+

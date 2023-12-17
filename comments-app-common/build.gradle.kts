@@ -14,11 +14,9 @@ kotlin {
 
                 // transport models
                 implementation(project(":comments-common"))
-                implementation(project(":comments-api-v1"))
-                implementation(project(":comments-mappers-v1"))
 
-                // Stubs
-                implementation(project(":comments-stubs"))
+                //logging
+                implementation(project(":comments-mappers-log"))
 
                 // Biz
                 implementation(project(":comments-biz"))
@@ -28,6 +26,11 @@ kotlin {
             dependencies {
                 implementation(kotlin("test-common"))
                 implementation(kotlin("test-annotations-common"))
+
+                // transport models
+                implementation(project(":comments-api-v1"))
+                implementation(project(":comments-mappers-v1"))
+                implementation(project(":comments-api-log"))
 
                 implementation(libs.kotlinx.coroutines.test)
             }

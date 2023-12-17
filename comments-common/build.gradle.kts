@@ -15,6 +15,8 @@ kotlin {
             dependencies {
                 implementation(kotlin("stdlib-common"))
 
+                api(project(":comments-lib-logging-common"))
+
                 api(libs.kotlinx.datetime)
             }
         }
