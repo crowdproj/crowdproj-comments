@@ -100,6 +100,7 @@ kotlin {
         val jvmTest by getting {
             dependencies {
                 implementation(kotlin("test-junit"))
+                implementation(libs.testcontainers.cassandra)
             }
         }
     }

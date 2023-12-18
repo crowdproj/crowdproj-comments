@@ -12,3 +12,14 @@ ktor:
   urls:
     - "http://127.0.0.1:8080/"
     - "http://0.0.0.0:8080/"
+comments:
+  repository:
+    test:
+      type: inmemory
+    prod:
+      type: cassandra
+      host: localhost
+      port: 9042
+      user: cassandra
+      pass: cassandra
+      keyspace: test_keyspace
