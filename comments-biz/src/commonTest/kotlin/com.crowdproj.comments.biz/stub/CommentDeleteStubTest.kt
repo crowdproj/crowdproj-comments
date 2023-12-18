@@ -1,4 +1,4 @@
-package ru.otus.otuskotlin.marketplace.biz.stub
+package com.crowdproj.comments.biz.stub
 
 import com.crowdproj.comments.biz.CommentProcessor
 import com.crowdproj.comments.common.CommentContext
@@ -8,62 +8,47 @@ import com.crowdproj.comments.stubs.CommentsStub
 import kotlinx.coroutines.test.runTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertTrue
-import kotlin.test.fail
 
-class CommentSearchStubTest {
+class CommentDeleteStubTest {
 
     private val processor = CommentProcessor()
-    val filter = CommentFilter(
-        objectType = CommentObjectType.PRODUCT,
-        objectId = CommentObjectId("777"),
-        userId = CommentUserId("888")
-    )
+    val id = CommentId("666")
 
     @Test
-    fun read() = runTest {
+    fun delete() = runTest {
 
         val ctx = CommentContext(
-            command = CommentCommand.SEARCH,
+            command = CommentCommand.DELETE,
             state = CommentState.NONE,
             workMode = CommentWorkMode.STUB,
             stubCase = CommentStubs.SUCCESS,
-            commentFilterRequest = filter
+            commentRequest = Comment(
+                id = id,
+            ),
         )
         processor.exec(ctx)
-        assertTrue(ctx.commentsResponse.size > 1)
-        CommentsStub.prepareSearchList(
-            filterObjectType = filter.objectType,
-            filterObjectId = filter.objectId.asString(),
-            filterUserId = filter.userId.asString()
-        ).also { stubList ->
-            assertEquals(stubList.size, ctx.commentsResponse.size)
-            stubList.forEach { comment ->
-                with(ctx.commentsResponse.firstOrNull { it.id == comment.id } ?: fail("Not found in response")) {
-                    assertEquals(comment.id, id)
-                    assertEquals(comment.content, content)
-                    assertEquals(comment.contentType, contentType)
-                    assertEquals(filter.objectType, objectType)
-                    assertEquals(filter.objectId, objectId)
-                    assertEquals(filter.userId, userId)
-                }
-            }
-        }
 
+        assertEquals(id, ctx.commentResponse.id)
+        with(CommentsStub.get()) {
+            assertEquals(objectType, ctx.commentResponse.objectType)
+            assertEquals(objectId, ctx.commentResponse.objectId)
+            assertEquals(userId, ctx.commentResponse.userId)
+            assertEquals(content, ctx.commentResponse.content)
+            assertEquals(contentType, ctx.commentResponse.contentType)
+        }
     }
 
     @Test
     fun badId() = runTest {
         val ctx = CommentContext(
-            command = CommentCommand.SEARCH,
+            command = CommentCommand.DELETE,
             state = CommentState.NONE,
             workMode = CommentWorkMode.STUB,
             stubCase = CommentStubs.BAD_ID,
-            commentFilterRequest = filter
+            commentRequest = Comment(),
         )
         processor.exec(ctx)
         assertEquals(Comment(), ctx.commentResponse)
-        assertTrue(ctx.commentsResponse.isEmpty())
         assertEquals("id", ctx.errors.firstOrNull()?.field)
         assertEquals(CommentError.Group.VALIDATION, ctx.errors.firstOrNull()?.group)
         assertEquals("validation-id-bad", ctx.errors.firstOrNull()?.code)
@@ -72,15 +57,16 @@ class CommentSearchStubTest {
     @Test
     fun notFound() = runTest {
         val ctx = CommentContext(
-            command = CommentCommand.SEARCH,
+            command = CommentCommand.DELETE,
             state = CommentState.NONE,
             workMode = CommentWorkMode.STUB,
             stubCase = CommentStubs.NOT_FOUND,
-            commentFilterRequest = filter
+            commentRequest = Comment(
+                id = id,
+            ),
         )
         processor.exec(ctx)
         assertEquals(Comment(), ctx.commentResponse)
-        assertTrue(ctx.commentsResponse.isEmpty())
         assertEquals(CommentError.Group.REQUEST, ctx.errors.firstOrNull()?.group)
         assertEquals("request-not-found", ctx.errors.firstOrNull()?.code)
     }
@@ -88,15 +74,16 @@ class CommentSearchStubTest {
     @Test
     fun databaseError() = runTest {
         val ctx = CommentContext(
-            command = CommentCommand.SEARCH,
+            command = CommentCommand.DELETE,
             state = CommentState.NONE,
             workMode = CommentWorkMode.STUB,
             stubCase = CommentStubs.DB_ERROR,
-            commentFilterRequest = filter
+            commentRequest = Comment(
+                id = id,
+            ),
         )
         processor.exec(ctx)
         assertEquals(Comment(), ctx.commentResponse)
-        assertTrue(ctx.commentsResponse.isEmpty())
         assertEquals(CommentError.Group.SERVER, ctx.errors.firstOrNull()?.group)
         assertEquals("internal-db", ctx.errors.firstOrNull()?.code)
     }
@@ -104,15 +91,14 @@ class CommentSearchStubTest {
     @Test
     fun badNoCase() = runTest {
         val ctx = CommentContext(
-            command = CommentCommand.SEARCH,
+            command = CommentCommand.DELETE,
             state = CommentState.NONE,
             workMode = CommentWorkMode.STUB,
             stubCase = CommentStubs.NONE,
-            commentFilterRequest = filter,
+            commentRequest = Comment(),
         )
         processor.exec(ctx)
         assertEquals(Comment(), ctx.commentResponse)
-        assertTrue(ctx.commentsResponse.isEmpty())
         assertEquals(CommentError.Group.VALIDATION, ctx.errors.firstOrNull()?.group)
         assertEquals("stub", ctx.errors.firstOrNull()?.field)
         assertEquals("validation", ctx.errors.firstOrNull()?.code)

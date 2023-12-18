@@ -67,18 +67,23 @@ fun validationFilterNotEmpty(command: CommentCommand, processor: CommentProcesso
         state = CommentState.NONE,
         workMode = CommentWorkMode.TEST,
         commentFilterRequest = CommentFilter(
-            objectType = CommentObjectType.PRODUCT,
+            objectType = CommentObjectType.NONE,
             objectId = CommentObjectId(""),
             userId = CommentUserId(""),
         )
     )
     processor.exec(ctx)
-    assertEquals(1, ctx.errors.size)
+    assertEquals(2, ctx.errors.size)
     assertEquals(CommentState.FAILING, ctx.state)
-    with(ctx.errors.firstOrNull()) {
+    with(ctx.errors.firstOrNull{ it.field == "commentFilter" }) {
         assertEquals("commentFilter", this?.field)
         assertEquals(CommentError.Group.VALIDATION , this?.group)
         assertContains(this?.message ?: "", "commentFilter")
+    }
+    with(ctx.errors.firstOrNull{ it.field == "filter-objectType" }) {
+        assertEquals("filter-objectType", this?.field)
+        assertEquals(CommentError.Group.VALIDATION , this?.group)
+        assertContains(this?.message ?: "", "filter-objectType")
     }
 }
 
