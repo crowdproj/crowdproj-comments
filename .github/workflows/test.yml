@@ -6,9 +6,13 @@ name: CI-tests
 on:
   push:
     branches:
+      - '*'
+      - '*/*'
       - '!release/*'
   pull_request:
     branches:
+      - '*'
+      - '*/*'
       - '!release/*'
 
   # Allows you to run this workflow manually from the Actions tab
