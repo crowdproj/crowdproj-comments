@@ -15,5 +15,7 @@ data class DbCommentResponse(
         fun success(result: Comment) = DbCommentResponse(result, true)
         fun error(errors: List<CommentError>) = DbCommentResponse(null, false, errors)
         fun error(error: CommentError) = DbCommentResponse(null, false, listOf(error))
+        fun error(data: Comment?, error: CommentError) = DbCommentResponse(data, false, listOf(error))
+        fun error(data: Comment?, errors: List<CommentError>) = DbCommentResponse(data, false, errors)
     }
 }

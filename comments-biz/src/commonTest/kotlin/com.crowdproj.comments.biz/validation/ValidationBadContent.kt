@@ -3,13 +3,13 @@ package com.crowdproj.comments.biz.validation
 import com.crowdproj.comments.biz.CommentProcessor
 import com.crowdproj.comments.common.CommentContext
 import com.crowdproj.comments.common.models.*
-import com.crowdproj.comments.stubs.CommentStub
+import com.crowdproj.comments.stubs.CommentsStub
 import kotlinx.coroutines.test.runTest
 import kotlin.test.assertContains
 import kotlin.test.assertEquals
 import kotlin.test.assertNotEquals
 
-private val stub = CommentStub.get()
+private val stub = CommentsStub.get()
 
 fun validationContentCorrect(command: CommentCommand, processor: CommentProcessor, commendIdEmpty: Boolean = false) = runTest {
     val ctx = CommentContext(

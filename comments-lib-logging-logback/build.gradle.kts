@@ -7,7 +7,7 @@ version = rootProject.version
 
 dependencies {
 
-    implementation(kotlin("stdlib-jdk8"))
+    implementation(kotlin("stdlib"))
 
     implementation(project(":comments-lib-logging-common"))
 

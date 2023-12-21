@@ -19,6 +19,8 @@ logbackKafka = "0.1.0"
 logbackMoreAppenders = "1.8.8"
 fluent = "0.3.4"
 crowdprojCoR = "0.5.7"
+datastax = "4.17.0"
+testcontainers = "1.19.3"
 
 [libraries]
 #KTOR Server
@@ -56,6 +58,7 @@ kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serializa
 kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "datetime" }
 kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutines" }
 kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "coroutines" }
+kotlinx-coroutines-jdk9 = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-jdk9", version.ref = "coroutines" }
 #UUID
 uuid = { module = "com.benasher44:uuid", version.ref = "uuid" }
 #Logging
@@ -69,10 +72,21 @@ logging-logback-more-appenders = { module = "com.sndyuk:logback-more-appenders",
 logging-fluent = { module = "org.fluentd:fluent-logger", version.ref = "fluent" }
 #Chain of Responsability
 crowdproj-cor = { module = "com.crowdproj:kotlin-cor", version.ref = "crowdprojCoR" }
+#DataBase
+database-cache4k = "io.github.reactivecircus.cache4k:cache4k:0.12.0"
+database-datastax-core = { module = "com.datastax.oss:java-driver-core", version.ref = "datastax" }
+database-datastax-query = { module = "com.datastax.oss:java-driver-query-builder", version.ref = "datastax" }
+database-datastax-mapper-runtime = { module = "com.datastax.oss:java-driver-mapper-runtime", version.ref = "datastax" }
+database-datastax-mapper-processor = { module = "com.datastax.oss:java-driver-mapper-processor", version.ref = "datastax" }
+#General
+kotlin-stdlib = {module = "org.jetbrains.kotlin:kotlin-stdlib", version.ref = "kotlin"}
+#Testcontainers
+testcontainers-cassandra = { module = "org.testcontainers:cassandra", version.ref = "testcontainers"}
 
 [plugins]
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
+kotlin-kapt = { id = "org.jetbrains.kotlin.kapt", version.ref = "kotlin" }
 kotlinx-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 ktor = { id = "io.ktor.plugin", version.ref = "ktor" }
 crowdproj-generator = { id = "com.crowdproj.generator", version.ref = "crowdprojCodegenerator" }

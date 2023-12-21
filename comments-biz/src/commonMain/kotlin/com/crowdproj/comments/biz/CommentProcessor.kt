@@ -1,10 +1,13 @@
 package com.crowdproj.comments.biz
 
-import com.crowdproj.comments.biz.group.operation
-import com.crowdproj.comments.biz.group.stub
+import com.crowdproj.comments.biz.general.initRepo
+import com.crowdproj.comments.biz.general.operation
+import com.crowdproj.comments.biz.general.prepareResponse
+import com.crowdproj.comments.biz.general.stub
 import com.crowdproj.comments.biz.validation.*
 import com.crowdproj.comments.biz.workers.*
 import com.crowdproj.comments.biz.workers.stubs.*
+import com.crowdproj.comments.biz.repo.*
 import com.crowdproj.comments.common.CommentContext
 import com.crowdproj.comments.common.config.CommentsCorSettings
 import com.crowdproj.comments.common.models.*
@@ -13,13 +16,14 @@ import com.crowdproj.kotlin.cor.rootChain
 
 class CommentProcessor(
     @Suppress("unused")
-    private val corSettings: CommentsCorSettings = CommentsCorSettings.NONE
+    private val settings: CommentsCorSettings = CommentsCorSettings.NONE
 ) {
-    suspend fun exec(ctx: CommentContext) = BusinessChain.exec(ctx)
+    suspend fun exec(ctx: CommentContext) = BusinessChain.exec(ctx.apply { this.settings = this@CommentProcessor.settings })
 
     companion object {
         val BusinessChain = rootChain {
             initChain("Init business chain")
+            initRepo("Init repo")
             operation("Create comment", CommentCommand.CREATE) {
                 stub("Stub processing") {
                     stubCreateSuccess("Simulating successful create processing")
@@ -49,6 +53,11 @@ class CommentProcessor(
 
                     finishCommentValidation("Finish validation")
                 }
+                repository("Creating logic") {
+                    repoPrepareCreate("Preparing to create")
+                    repoCreate("Creating comment in repoProd")
+                }
+                prepareResponse("Prepare response")
             }
             operation("Read comment", CommentCommand.READ) {
                 stub("Stub processing") {
@@ -68,6 +77,11 @@ class CommentProcessor(
 
                     finishCommentValidation("Finish validation")
                 }
+                repository("Read logic") {
+                    repoRead("Reading comment from repoProd")
+                    repoReadDone("Finish read comment")
+                }
+                prepareResponse("Prepare response")
             }
             operation("Update comment", CommentCommand.UPDATE) {
                 stub("Stub processing") {
@@ -100,6 +114,12 @@ class CommentProcessor(
 
                     finishCommentValidation("Finish validation")
                 }
+                repository("Update logic") {
+                    repoRead("Reading comment from repoProd")
+                    repoPrepareUpdate("Preparing object to update")
+                    repoUpdate("Updating comment in repoProd")
+                }
+                prepareResponse("Prepare response")
             }
             operation("Delete comment", CommentCommand.DELETE) {
                 stub("Stub processing") {
@@ -119,6 +139,12 @@ class CommentProcessor(
 
                     finishCommentValidation("Finish validation")
                 }
+                repository("Delete logic") {
+                    repoRead("Reading comment from repoProd")
+                    repoPrepareDelete("Preparing object to delete")
+                    repoDelete("Deleting comment in repoProd")
+                }
+                prepareResponse("Prepare response")
             }
             operation("Search comments", CommentCommand.SEARCH) {
                 stub("Stub processing") {
@@ -132,13 +158,20 @@ class CommentProcessor(
                     worker("Copy fields to commentsValidating")
                     { commentFilterValidating = commentFilterRequest.copy() }
                     worker("Clean object id")
-                    { commentFilterValidating.objectId = CommentObjectId(commentFilterValidating.objectId.asString().trim()) }
+                    {
+                        commentFilterValidating.objectId =
+                            CommentObjectId(commentFilterValidating.objectId.asString().trim())
+                    }
                     worker("Clean user id")
                     { commentFilterValidating.userId = CommentUserId(commentFilterValidating.userId.asString().trim()) }
                     validateCommentFilter("Validate filter")
 
                     finishCommentFilterValidation("Finish validation")
                 }
+                repository("Search logic") {
+                    repoSearch("Search comments in repoProd")
+                }
+                prepareResponse("Prepare response")
             }
         }.build()
     }

@@ -3,6 +3,9 @@ package com.crowdproj.comments.app.stubs
 import com.crowdproj.comments.api.v1.commentsApiV1Json
 import com.crowdproj.comments.api.v1.models.*
 import com.crowdproj.comments.api.v1.models.ContentType
+import com.crowdproj.comments.app.configs.CommentsAppSettings
+import com.crowdproj.comments.app.module
+import com.crowdproj.comments.common.config.CommentsCorSettings
 import io.ktor.client.call.*
 import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.client.request.*
@@ -15,6 +18,7 @@ import kotlin.test.assertEquals
 class CommentsStubApiTest {
     @Test
     fun create() = testApplication {
+        application { module(CommentsAppSettings(corSettings = CommentsCorSettings())) }
         val client = myClient()
 
         val response = client.post("/v1/create") {
@@ -41,6 +45,7 @@ class CommentsStubApiTest {
 
     @Test
     fun read() = testApplication {
+        application { module(CommentsAppSettings(corSettings = CommentsCorSettings())) }
         val client = myClient()
 
         val response = client.post("/v1/read") {
@@ -58,11 +63,12 @@ class CommentsStubApiTest {
         }
         val responseObj = response.body<CommentReadResponse>()
         assertEquals(200, response.status.value)
-        assertEquals("5312", responseObj.comment?.id)
+        assertEquals("544444", responseObj.comment?.id)
     }
 
     @Test
     fun update() = testApplication {
+        application { module(CommentsAppSettings(corSettings = CommentsCorSettings())) }
         val client = myClient()
 
         val response = client.post("/v1/update") {
@@ -89,6 +95,7 @@ class CommentsStubApiTest {
 
     @Test
     fun delete() = testApplication {
+        application { module(CommentsAppSettings(corSettings = CommentsCorSettings())) }
         val client = myClient()
 
         val response = client.post("/v1/delete") {
@@ -106,11 +113,12 @@ class CommentsStubApiTest {
         }
         val responseObj = response.body<CommentDeleteResponse>()
         assertEquals(200, response.status.value)
-        assertEquals("5312", responseObj.comment?.id)
+        assertEquals("544444", responseObj.comment?.id)
     }
 
     @Test
     fun search() = testApplication {
+        application { module(CommentsAppSettings(corSettings = CommentsCorSettings())) }
         val client = myClient()
 
         val response = client.post("/v1/search") {

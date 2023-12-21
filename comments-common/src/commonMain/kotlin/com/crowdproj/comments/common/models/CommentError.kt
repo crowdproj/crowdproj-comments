@@ -23,5 +23,7 @@ data class CommentError(
         SERVER("internal-server"),
         VALIDATION("validation"),
         REQUEST("request"),
+        REPOSITORY("repository"),
+        ADMINISTRATION("administration"),
     }
 }

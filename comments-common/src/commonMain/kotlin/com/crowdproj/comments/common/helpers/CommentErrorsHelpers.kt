@@ -1,7 +1,9 @@
 package com.crowdproj.comments.common.helpers
 
 import com.crowdproj.comments.common.CommentContext
+import com.crowdproj.comments.common.exceptions.RepoConcurrencyException
 import com.crowdproj.comments.common.models.CommentError
+import com.crowdproj.comments.common.models.CommentLock
 import com.crowdproj.comments.common.models.CommentState
 
 fun Throwable.asCommentError(
@@ -17,8 +19,13 @@ fun Throwable.asCommentError(
 )
 fun CommentContext.addError(vararg error: CommentError) = errors.addAll(error)
 fun CommentContext.fail(error: CommentError) {
-    addError(error)
     state = CommentState.FAILING
+    addError(error)
+}
+
+fun CommentContext.fail(errors: List<CommentError>) {
+    state = CommentState.FAILING
+    addError(*errors.toTypedArray())
 }
 
 fun errorValidation(
@@ -36,4 +43,35 @@ fun errorValidation(
     group = CommentError.Group.VALIDATION,
     message = "Validation error in field $field: $description",
     level = level
+)
+
+fun errorAdministration(
+    /**
+     * Код, характеризующий ошибку. Не должен включать имя поля или указание на валидацию.
+     * Например: empty, badSymbols, tooLong, etc
+     */
+    field: String = "",
+    violationCode: String,
+    description: String,
+    exception: Exception? = null,
+    level: CommentError.Level = CommentError.Level.ERROR,
+) = CommentError(
+    field = field,
+    code = "administration-$violationCode",
+    group = CommentError.Group.ADMINISTRATION,
+    message = "Microservice management error: $description",
+    level = level,
+    exception = exception,
+)
+
+fun errorRepoConcurrency(
+    expectedLock: CommentLock,
+    actualLock: CommentLock?,
+    exception: Exception? = null,
+) = CommentError(
+    code = "concurrency",
+    group = CommentError.Group.REPOSITORY,
+    field = "lock",
+    message = "The object has been changed concurrently by another user or process",
+    exception = exception ?: RepoConcurrencyException(expectedLock, actualLock)
 )

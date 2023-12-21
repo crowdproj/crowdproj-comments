@@ -6,6 +6,6 @@ import com.crowdproj.comments.common.models.CommentUserId
 
 data class DbCommentFilterRequest(
     val objectType: CommentObjectType = CommentObjectType.NONE,
-    val ownerId: CommentObjectId = CommentObjectId.NONE,
-    val dealSide: CommentUserId = CommentUserId.NONE,
+    val objectId: CommentObjectId = CommentObjectId.NONE,
+    val userId: CommentUserId = CommentUserId.NONE,
 )

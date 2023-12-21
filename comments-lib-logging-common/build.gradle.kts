@@ -7,6 +7,7 @@ version = rootProject.version
 kotlin {
     jvm { withJava() }
     linuxX64 { }
+    linuxArm64 {}
 
     sourceSets {
 
@@ -28,7 +29,7 @@ kotlin {
 
         val jvmMain by getting {
             dependencies {
-                implementation(kotlin("stdlib-jdk8"))
+                implementation(kotlin("stdlib"))
             }
         }
         val jvmTest by getting {

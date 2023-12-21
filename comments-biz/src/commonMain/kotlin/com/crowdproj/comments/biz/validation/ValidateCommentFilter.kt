@@ -32,7 +32,11 @@ private fun CorChainDsl<CommentContext>.validateFilterObjectType(title: String) 
 
 private fun CorChainDsl<CommentContext>.validateFilterNotEmpty(title: String) = worker {
     this.title = title
-    on { commentFilterValidating.objectId.asString().isEmpty() && commentFilterValidating.userId.asString().isEmpty() }
+    on {
+        commentFilterValidating.objectId.asString().isEmpty()
+            && commentFilterValidating.userId.asString().isEmpty()
+            && commentFilterValidating.objectType == CommentObjectType.NONE
+    }
     handle {
         fail(
             errorValidation(

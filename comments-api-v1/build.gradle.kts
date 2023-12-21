@@ -23,6 +23,7 @@ kotlin {
         browser {}
     }
     linuxX64 {}
+    linuxArm64 { }
 
     sourceSets {
         val serializationVersion: String by project

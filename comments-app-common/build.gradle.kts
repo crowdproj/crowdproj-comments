@@ -1,16 +1,17 @@
 plugins {
-    kotlin("multiplatform")
+    alias(libs.plugins.kotlin.multiplatform)
 }
 
 kotlin {
     jvm { }
     linuxX64 { }
+    linuxArm64 { }
 
     sourceSets {
         val coroutinesVersion: String by project
         val commonMain by getting {
             dependencies {
-                implementation(kotlin("stdlib-jdk8"))
+                implementation(kotlin("stdlib"))
 
                 // transport models
                 implementation(project(":comments-common"))
