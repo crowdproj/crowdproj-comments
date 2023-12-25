@@ -215,30 +215,23 @@ tasks {
             copy {
                 from(nativeFileArm64)
                 from(linuxArm64ProcessResources.destinationDir)
-                into("${this@creating.destDir.get()}/bin/arm64")
+                into("${this@creating.destDir.get()}/linux/arm64")
             }
         }
-        from(Dockerfile.From("ubuntu:23.04").withPlatform("linux/arm64"))
-        copyFile("bin/arm64/${nativeFileArm64.name}", "/app/")
-        copyFile("bin/arm64/application.yaml", "/app/")
-        exposePort(8081)
-        workingDir("/app")
-        entryPoint("/app/${nativeFileArm64.name}", "-config=./application.yaml")
-
-        //x64
         doFirst {
             copy {
                 from(nativeFileX64)
                 from(linuxX64ProcessResources.destinationDir)
-                into("${this@creating.destDir.get()}/bin/x64")
+                into("${this@creating.destDir.get()}/linux/amd64")
             }
         }
-        from(Dockerfile.From("ubuntu:23.04").withPlatform("linux/amd64"))
-        copyFile("bin/x64/${nativeFileX64.name}", "/app/")
-        copyFile("bin/x64/application.yaml", "/app/")
+        from(Dockerfile.From("ubuntu:23.04").withPlatform("\$TARGETPLATFORM"))
+        arg("TARGETPLATFORM")
+        copyFile("\${TARGETPLATFORM}/${nativeFileArm64.name}", "/app/")
+        copyFile("\${TARGETPLATFORM}/application.yaml", "/app/")
         exposePort(8081)
         workingDir("/app")
-        entryPoint("/app/${nativeFileX64.name}", "-config=./application.yaml")
+        entryPoint("/app/${nativeFileArm64.name}", "-config=./application.yaml")
     }
 
 
