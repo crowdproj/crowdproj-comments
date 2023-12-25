@@ -118,6 +118,7 @@ tasks {
     val linuxArm64ProcessResources by getting(ProcessResources::class)
     val dockerLinuxX64Dir = layout.buildDirectory.file("docker-x64/Dockerfile").get().asFile
     val dockerLinuxArm64Dir = layout.buildDirectory.file("docker-arm64/Dockerfile").get().asFile
+    val dockerLinuxMultiplatformDir = layout.buildDirectory.file("docker-multiplatform/Dockerfile").get().asFile
 
     val dockerDockerfileX64 by creating(Dockerfile::class) {
         dependsOn(linkReleaseExecutableLinuxX64)
@@ -200,6 +201,59 @@ tasks {
             url.set("https://$registryHost/v1/")
         }
     }
+
+    val dockerDockerfileMultiplatform by creating(Dockerfile::class) {
+        dependsOn(linkReleaseExecutableLinuxArm64)
+        dependsOn(linuxArm64ProcessResources)
+        dependsOn(linkReleaseExecutableLinuxX64)
+        dependsOn(linuxX64ProcessResources)
+        group = "docker"
+        destFile.set(dockerLinuxMultiplatformDir)
+
+        //arm64
+        doFirst {
+            copy {
+                from(nativeFileArm64)
+                from(linuxArm64ProcessResources.destinationDir)
+                into("${this@creating.destDir.get()}/bin/arm64")
+            }
+        }
+        from(Dockerfile.From("ubuntu:23.04").withPlatform("linux/arm64"))
+        copyFile("bin/arm64/${nativeFileArm64.name}", "/app/")
+        copyFile("bin/arm64/application.yaml", "/app/")
+        exposePort(8081)
+        workingDir("/app")
+        entryPoint("/app/${nativeFileArm64.name}", "-config=./application.yaml")
+
+        //x64
+        doFirst {
+            copy {
+                from(nativeFileX64)
+                from(linuxX64ProcessResources.destinationDir)
+                into("${this@creating.destDir.get()}/bin/x64")
+            }
+        }
+        from(Dockerfile.From("ubuntu:23.04").withPlatform("linux/amd64"))
+        copyFile("bin/x64/${nativeFileX64.name}", "/app/")
+        copyFile("bin/x64/application.yaml", "/app/")
+        exposePort(8081)
+        workingDir("/app")
+        entryPoint("/app/${nativeFileX64.name}", "-config=./application.yaml")
+    }
+
+
+    val deployMultiplatform by creating(Exec::class) {
+        group = "build"
+        dependsOn(dockerDockerfileMultiplatform)
+        workingDir(dockerDockerfileMultiplatform.destDir)
+        workingDir.list()?.forEach {
+            println(it)
+        }
+        executable("docker")
+        println("Image name: $imageName")
+        args("buildx", "build", "--platform", "linux/amd64,linux/arm64", "-t", "$imageName:${rootProject.version}", "-t", "$imageName:latest","--push", ".")
+    }
+
 
     create("deploy") {
         group = "build"
