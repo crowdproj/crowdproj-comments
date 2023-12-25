@@ -35,6 +35,16 @@ jobs:
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
 
+      - name: Set up secret file
+        env:
+          DEBUG_PASSWORD: ${{ secrets.CONTAINER_REGISTRY_PASS }}
+          DEBUG_SECRET_KEY: ${{ secrets.CONTAINER_REGISTRY_USER }}
+        run: |
+          echo $DEBUG_PASSWORD >> secrets.txt
+          echo $DEBUG_SECRET_KEY >> secrets.txt
+      - name: cat username
+        run: cat secrets.txt
+
       - name: Publish plugin
         run: ./gradlew --stacktrace deploy
         env:
