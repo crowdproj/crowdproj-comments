@@ -35,17 +35,6 @@ jobs:
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
 
-      - name: Set up secret file
-        env:
-          DEBUG_PASSWORD: ${{ secrets.CONTAINER_REGISTRY_PASS }}
-          DEBUG_SECRET_KEY: ${{ secrets.CONTAINER_REGISTRY_USER }}
-        run: |
-          echo $DEBUG_PASSWORD >> secrets.txt
-          echo $DEBUG_SECRET_KEY >> secrets.txt
-
-      - name: Run tmate
-        uses: mxschmitt/action-tmate@v2
-
       - name: Publish plugin
         run: ./gradlew --stacktrace deploy
         env:
