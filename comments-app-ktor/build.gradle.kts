@@ -161,14 +161,15 @@ tasks {
     val registryPass: String? = System.getenv("CONTAINER_REGISTRY_PASS")
     val registryHost: String? = System.getenv("CONTAINER_REGISTRY_HOST")
     val registryPref: String? = System.getenv("CONTAINER_REGISTRY_PREF")
-    val imageName = registryPref?.let { "$it/${project.name}" } ?: project.name
+    val registryName: String? = System.getenv("CONTAINER_REGISTRY_NAME")
+    val imageName = registryPref?.let { "$it/$registryName" } ?: registryName
 
     val dockerBuildX64Image by creating(DockerBuildImage::class) {
         group = "docker"
         dependsOn(dockerDockerfileX64)
         inputDir.set(dockerLinuxX64Dir.parentFile)
-        images.add("$imageName-x64:${rootProject.version}")
-        images.add("$imageName-x64:latest")
+        images.add("$imageName:${rootProject.version}-x64")
+        images.add("$imageName:latest-x64")
         platform.set("linux/amd64")
     }
     val dockerPushX64Image by creating(DockerPushImage::class) {
@@ -185,8 +186,8 @@ tasks {
         group = "docker"
         dependsOn(dockerDockerfileArm64)
         inputDir.set(dockerLinuxArm64Dir.parentFile)
-        images.add("$imageName-arm64:${rootProject.version}")
-        images.add("$imageName-arm64:latest")
+        images.add("$imageName:${rootProject.version}-arm64")
+        images.add("$imageName:latest-arm64")
         platform.set("linux/arm64")
     }
     val dockerPushArm64Image by creating(DockerPushImage::class) {
