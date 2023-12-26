@@ -106,6 +106,12 @@ kotlin {
     }
 }
 
+ktor {
+    fatJar {
+        archiveFileName.set("${project.name}.jar")
+    }
+}
+
 
 tasks {
     val linkReleaseExecutableLinuxX64 by getting(KotlinNativeLink::class)
@@ -116,9 +122,11 @@ tasks {
 //    val nativeFile = linkDebugExecutableLinuxX64.binary.outputFile
     val linuxX64ProcessResources by getting(ProcessResources::class)
     val linuxArm64ProcessResources by getting(ProcessResources::class)
+    val jvmProcessResources by getting(ProcessResources::class)
     val dockerLinuxX64Dir = layout.buildDirectory.file("docker-x64/Dockerfile").get().asFile
     val dockerLinuxArm64Dir = layout.buildDirectory.file("docker-arm64/Dockerfile").get().asFile
     val dockerLinuxMultiplatformDir = layout.buildDirectory.file("docker-multiplatform/Dockerfile").get().asFile
+    val dockerJvmDir = layout.buildDirectory.file("docker-jvm/Dockerfile").get().asFile
 
     val dockerDockerfileX64 by creating(Dockerfile::class) {
         dependsOn(linkReleaseExecutableLinuxX64)
@@ -229,14 +237,57 @@ tasks {
         arg("TARGETPLATFORM")
         copyFile("\${TARGETPLATFORM}/${nativeFileArm64.name}", "/app/")
         copyFile("\${TARGETPLATFORM}/application.yaml", "/app/")
-        exposePort(8081)
+        exposePort(8080)
         workingDir("/app")
         entryPoint("/app/${nativeFileArm64.name}", "-config=./application.yaml")
+    }
+
+    val dockerDockerfileJvm by creating(Dockerfile::class) {
+        dependsOn(buildFatJar)
+        dependsOn(shadowJar)
+        dependsOn(jvmProcessResources)
+        group = "docker"
+        destFile.set(dockerJvmDir)
+
+        doFirst {
+            copy {
+                from(layout.buildDirectory.dir("libs"))
+                from(jvmProcessResources.destinationDir)
+                into("${this@creating.destDir.get().dir("app")}")
+            }
+        }
+
+        from(Dockerfile.From("openjdk:17-alpine"))
+        destDir.get().dir("app").asFile.listFiles()?.forEach {
+            copyFile("app/${it.name}", "/app/")
+        }
+
+        exposePort(8080)
+        workingDir("/app")
+        entryPoint("java", "-jar", ktor.fatJar.archiveFileName.get())
+    }
+    val dockerBuildJvmImage by creating(DockerBuildImage::class) {
+        group = "docker"
+        dependsOn(dockerDockerfileJvm)
+        inputDir.set(dockerJvmDir.parentFile)
+        images.add("$imageName-jvm:${rootProject.version}")
+        images.add("$imageName-jvm:latest")
+    }
+    val dockerPushJvmImage by creating(DockerPushImage::class) {
+        group = "docker"
+        dependsOn(dockerBuildJvmImage)
+        images.set(dockerBuildJvmImage.images)
+        registryCredentials {
+            username.set(registryUser)
+            password.set(registryPass)
+            url.set("https://$registryHost/v1/")
+        }
     }
 
 
     val deployMultiplatform by creating(Exec::class) {
         group = "build"
+        dependsOn(dockerPushJvmImage)
         dependsOn(dockerDockerfileMultiplatform)
         workingDir(dockerDockerfileMultiplatform.destDir)
         workingDir.list()?.forEach {
@@ -247,10 +298,10 @@ tasks {
         args("buildx", "build", "--platform", "linux/amd64,linux/arm64", "-t", "$imageName:${rootProject.version}", "-t", "$imageName:latest","--push", ".")
     }
 
-
     create("deploy") {
         group = "build"
         dependsOn(dockerPushX64Image)
         dependsOn(dockerPushArm64Image)
+        dependsOn(dockerPushJvmImage)
     }
 }

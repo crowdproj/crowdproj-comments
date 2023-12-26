@@ -6,27 +6,58 @@
 version: "3"
 services:
 
-#  app:
-#    container_name: app
-#    image: nginx
-#    ports:
-#      - 8080:80
+  app:
+    container_name: app
+    image: stellalupus/crowdproj-comments-jvm
+    ports:
+      - 8080:8080
 #    volumes:
 #      # добавляем конфигурацию в контейнер
 #      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
-#    depends_on:
-#      - fluent-bit
-#    logging:
-#      # используемый драйвер логгирования
-#      driver: "fluentd"
-#      options:
-#        # куда посылать лог-сообщения
-#        # необходимо чтобы адрес совпадал с настройками плагина forward
-#        fluentd-address: localhost:24224
-#        # теги используются для маршрутизации лог-сообщений
-#        tag: app.logs
-#    networks:
-#      - opensearch
+    environment:
+      CASSANDRA_HOST: cassandra
+      CASSANDRA_TESTING: true
+    depends_on:
+      - fluent-bit
+      - cassandra
+    logging:
+      # используемый драйвер логгирования
+      driver: "fluentd"
+      options:
+        # куда посылать лог-сообщения
+        # необходимо чтобы адрес совпадал с настройками плагина forward
+        fluentd-address: localhost:24224
+        # теги используются для маршрутизации лог-сообщений
+        tag: app.logs
+    networks:
+      - opensearch
+
+  cassandra:
+    image: cassandra:3.11.16   # better to use a specific version, if you want to control upgrades
+    container_name: cassandra
+
+    healthcheck:
+      test: [ "CMD", "cqlsh", "-e", "describe keyspaces" ]
+      interval: 5s
+      timeout: 5s
+      retries: 60
+    volumes:
+      - ./volumes/cassandra:/var/lib/cassandra
+    environment:    # Declare and save environments variables into "environment"
+      CASSANDRA_SNITCH: GossipingPropertyFileSnitch
+      JVM_OPTS: -Dcassandra.skip_wait_for_gossip_to_settle=0 -Dcassandra.initial_token=0
+      HEAP_NEWSIZE: 128M
+      MAX_HEAP_SIZE: 1024M
+      CASSANDRA_ENDPOINT_SNITCH: GossipingPropertyFileSnitch
+      CASSANDRA_DC: datacenter1
+    networks:
+      opensearch:
+        aliases:
+          - cassandra
+    deploy:
+      resources:
+        limits:
+          memory: 2G  # It's not strictly required, but it's better to have some memory limit
 
   fluent-bit:
     container_name: fluent-bit

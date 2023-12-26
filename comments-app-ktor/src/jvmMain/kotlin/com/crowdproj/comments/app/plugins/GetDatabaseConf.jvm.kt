@@ -18,7 +18,7 @@ actual fun Application.getDatabaseConf(type: CommentDbType): ICommentsRepository
     )
 
     return when(dbType) {
-        "inmemory", "memory", "mem" -> initInMemory()
+        "inmemory", "memory", "mem" -> initInMemory(dbConfig)
         "cassandra", "cass" -> initCassandra(dbConfig)
         else -> throw IllegalArgumentException(
             "$dbSettingPath.type must be set in application.yml to one of: " +
@@ -28,7 +28,7 @@ actual fun Application.getDatabaseConf(type: CommentDbType): ICommentsRepository
 }
 
 
-private fun Application.initCassandra(dbConfig: ApplicationConfig): ICommentsRepository {
+private fun initCassandra(dbConfig: ApplicationConfig): ICommentsRepository {
     val config = CassandraConfig(dbConfig)
     return CommentsRepoCassandra(
         keyspaceName = config.keyspace,
@@ -36,11 +36,12 @@ private fun Application.initCassandra(dbConfig: ApplicationConfig): ICommentsRep
         port = config.port,
         user = config.user,
         pass = config.pass,
+        testing = config.testing
     )
 }
 
-private fun Application.initInMemory(): ICommentsRepository {
-    val ttlSetting = environment.config.propertyOrNull("db.prod")?.getString()?.let {
+private fun initInMemory(dbConfig: ApplicationConfig): ICommentsRepository {
+    val ttlSetting = dbConfig.propertyOrNull("ttl")?.getString()?.let {
         Duration.parse(it)
     }
     return CommentsRepoInMemory(ttl = ttlSetting ?: 10.minutes)
