@@ -106,6 +106,12 @@ kotlin {
     }
 }
 
+ktor {
+    fatJar {
+        archiveFileName.set("${project.name}.jar")
+    }
+}
+
 
 tasks {
     val linkReleaseExecutableLinuxX64 by getting(KotlinNativeLink::class)
@@ -116,8 +122,11 @@ tasks {
 //    val nativeFile = linkDebugExecutableLinuxX64.binary.outputFile
     val linuxX64ProcessResources by getting(ProcessResources::class)
     val linuxArm64ProcessResources by getting(ProcessResources::class)
+    val jvmProcessResources by getting(ProcessResources::class)
     val dockerLinuxX64Dir = layout.buildDirectory.file("docker-x64/Dockerfile").get().asFile
     val dockerLinuxArm64Dir = layout.buildDirectory.file("docker-arm64/Dockerfile").get().asFile
+    val dockerLinuxMultiplatformDir = layout.buildDirectory.file("docker-multiplatform/Dockerfile").get().asFile
+    val dockerJvmDir = layout.buildDirectory.file("docker-jvm/Dockerfile").get().asFile
 
     val dockerDockerfileX64 by creating(Dockerfile::class) {
         dependsOn(linkReleaseExecutableLinuxX64)
@@ -161,14 +170,15 @@ tasks {
     val registryPass: String? = System.getenv("CONTAINER_REGISTRY_PASS")
     val registryHost: String? = System.getenv("CONTAINER_REGISTRY_HOST")
     val registryPref: String? = System.getenv("CONTAINER_REGISTRY_PREF")
-    val imageName = registryPref?.let { "$it/${project.name}" } ?: project.name
+    val registryName: String? = System.getenv("CONTAINER_REGISTRY_NAME")
+    val imageName = registryPref?.let { "$it/$registryName" } ?: registryName
 
     val dockerBuildX64Image by creating(DockerBuildImage::class) {
         group = "docker"
         dependsOn(dockerDockerfileX64)
         inputDir.set(dockerLinuxX64Dir.parentFile)
-        images.add("$imageName-x64:${rootProject.version}")
-        images.add("$imageName-x64:latest")
+        images.add("$imageName:${rootProject.version}-x64")
+        images.add("$imageName:latest-x64")
         platform.set("linux/amd64")
     }
     val dockerPushX64Image by creating(DockerPushImage::class) {
@@ -185,8 +195,8 @@ tasks {
         group = "docker"
         dependsOn(dockerDockerfileArm64)
         inputDir.set(dockerLinuxArm64Dir.parentFile)
-        images.add("$imageName-arm64:${rootProject.version}")
-        images.add("$imageName-arm64:latest")
+        images.add("$imageName:${rootProject.version}-arm64")
+        images.add("$imageName:latest-arm64")
         platform.set("linux/arm64")
     }
     val dockerPushArm64Image by creating(DockerPushImage::class) {
@@ -200,9 +210,98 @@ tasks {
         }
     }
 
+    val dockerDockerfileMultiplatform by creating(Dockerfile::class) {
+        dependsOn(linkReleaseExecutableLinuxArm64)
+        dependsOn(linuxArm64ProcessResources)
+        dependsOn(linkReleaseExecutableLinuxX64)
+        dependsOn(linuxX64ProcessResources)
+        group = "docker"
+        destFile.set(dockerLinuxMultiplatformDir)
+
+        //arm64
+        doFirst {
+            copy {
+                from(nativeFileArm64)
+                from(linuxArm64ProcessResources.destinationDir)
+                into("${this@creating.destDir.get()}/linux/arm64")
+            }
+        }
+        doFirst {
+            copy {
+                from(nativeFileX64)
+                from(linuxX64ProcessResources.destinationDir)
+                into("${this@creating.destDir.get()}/linux/amd64")
+            }
+        }
+        from(Dockerfile.From("ubuntu:23.04").withPlatform("\$TARGETPLATFORM"))
+        arg("TARGETPLATFORM")
+        copyFile("\${TARGETPLATFORM}/${nativeFileArm64.name}", "/app/")
+        copyFile("\${TARGETPLATFORM}/application.yaml", "/app/")
+        exposePort(8080)
+        workingDir("/app")
+        entryPoint("/app/${nativeFileArm64.name}", "-config=./application.yaml")
+    }
+
+    val dockerDockerfileJvm by creating(Dockerfile::class) {
+        dependsOn(buildFatJar)
+        dependsOn(shadowJar)
+        dependsOn(jvmProcessResources)
+        group = "docker"
+        destFile.set(dockerJvmDir)
+
+        doFirst {
+            copy {
+                from(layout.buildDirectory.dir("libs"))
+                from(jvmProcessResources.destinationDir)
+                into("${this@creating.destDir.get().dir("app")}")
+            }
+        }
+
+        from(Dockerfile.From("openjdk:17-alpine"))
+        destDir.get().dir("app").asFile.listFiles()?.forEach {
+            copyFile("app/${it.name}", "/app/")
+        }
+
+        exposePort(8080)
+        workingDir("/app")
+        entryPoint("java", "-jar", ktor.fatJar.archiveFileName.get())
+    }
+    val dockerBuildJvmImage by creating(DockerBuildImage::class) {
+        group = "docker"
+        dependsOn(dockerDockerfileJvm)
+        inputDir.set(dockerJvmDir.parentFile)
+        images.add("$imageName-jvm:${rootProject.version}")
+        images.add("$imageName-jvm:latest")
+    }
+    val dockerPushJvmImage by creating(DockerPushImage::class) {
+        group = "docker"
+        dependsOn(dockerBuildJvmImage)
+        images.set(dockerBuildJvmImage.images)
+        registryCredentials {
+            username.set(registryUser)
+            password.set(registryPass)
+            url.set("https://$registryHost/v1/")
+        }
+    }
+
+
+    val deployMultiplatform by creating(Exec::class) {
+        group = "build"
+        dependsOn(dockerPushJvmImage)
+        dependsOn(dockerDockerfileMultiplatform)
+        workingDir(dockerDockerfileMultiplatform.destDir)
+        workingDir.list()?.forEach {
+            println(it)
+        }
+        executable("docker")
+        println("Image name: $imageName")
+        args("buildx", "build", "--platform", "linux/amd64,linux/arm64", "-t", "$imageName:${rootProject.version}", "-t", "$imageName:latest","--push", ".")
+    }
+
     create("deploy") {
         group = "build"
         dependsOn(dockerPushX64Image)
         dependsOn(dockerPushArm64Image)
+        dependsOn(dockerPushJvmImage)
     }
 }
