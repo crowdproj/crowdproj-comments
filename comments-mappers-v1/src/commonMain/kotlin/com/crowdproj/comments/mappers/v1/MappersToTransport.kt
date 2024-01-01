@@ -87,7 +87,7 @@ private fun Comment.toTransportComment() = CommentResponseObject(
     content = content.takeIf { it.isNotBlank() },
     contentType = contentType.toTransport(),
     lock = lock.takeIf { it != CommentLock.NONE }?.asString(),
-    permissions = permissionClient.toTransport()
+    permissions = permissionsClient.toTransport()
 )
 
 private fun MutableSet<CommentPermissionClient>.toTransport(): Set<CommentPermissions>? = this

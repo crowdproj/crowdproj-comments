@@ -13,7 +13,7 @@ object CommentStubReview {
             contentType = CommentContentType.PLAIN,
             createdAt = kotlinx.datetime.Instant.parse("2023-10-12T07:45:44Z"),
             updatedAt = kotlinx.datetime.Instant.parse("2023-10-13T21:23:12Z"),
-            permissionClient = mutableSetOf(
+            permissionsClient = mutableSetOf(
                 CommentPermissionClient.READ,
                 CommentPermissionClient.UPDATE,
                 CommentPermissionClient.DELETE,

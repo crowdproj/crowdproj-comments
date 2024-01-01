@@ -4,7 +4,6 @@ enum class CommentsUserPermissions {
     CREATE_OWN,
 
     READ_OWN,
-    READ_GROUP,
     READ_PUBLIC,
 
     UPDATE_OWN,

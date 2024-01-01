@@ -15,10 +15,10 @@ data class Comment(
     var updatedAt: Instant = Instant.NONE,
     var lock: CommentLock = CommentLock.NONE,
     var principalRelations: Set<CommentsPrincipalRelations> = emptySet(),
-    var permissionClient: MutableSet<CommentPermissionClient> = mutableSetOf(),
+    var permissionsClient: MutableSet<CommentPermissionClient> = mutableSetOf(),
 ) {
     fun deepCopy(): Comment = copy(
-        permissionClient = permissionClient.toMutableSet()
+        permissionsClient = permissionsClient.toMutableSet()
     )
 
     companion object {

@@ -26,7 +26,10 @@ fun CorChainDsl<CommentContext>.accessValidation(title: String) = chain {
         on { !permitted }
         handle {
             fail(
-                CommentError("User is not permitted to do this action")
+                CommentError(
+                    "User is not permitted to do this action",
+                    group = CommentError.Group.ACCESS
+                )
             )
         }
     }

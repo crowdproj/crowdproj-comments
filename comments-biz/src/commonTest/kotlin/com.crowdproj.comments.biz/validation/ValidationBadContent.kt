@@ -26,7 +26,7 @@ fun validationContentCorrect(command: CommentCommand, processor: CommentProcesso
             contentType = CommentContentType.PLAIN,
         ),
         principal = CommentsPrincipalModel(
-            id = CommentUserId("123-234-abc-ABC"),
+            id = stub.userId,
             groups = setOf(
                 CommentsUserGroups.USER,
                 CommentsUserGroups.MODERATOR
@@ -52,7 +52,7 @@ fun validationContentTrim(command: CommentCommand, processor: CommentProcessor, 
             contentType = CommentContentType.PLAIN,
         ),
         principal = CommentsPrincipalModel(
-            id = CommentUserId("123-234-abc-ABC"),
+            id = stub.userId,
             groups = setOf(
                 CommentsUserGroups.USER,
                 CommentsUserGroups.MODERATOR
@@ -78,7 +78,7 @@ fun validationContentEmpty(command: CommentCommand, processor: CommentProcessor,
             contentType = CommentContentType.PLAIN,
         ),
         principal = CommentsPrincipalModel(
-            id = CommentUserId("123-234-abc-ABC"),
+            id = stub.userId,
             groups = setOf(
                 CommentsUserGroups.USER,
                 CommentsUserGroups.MODERATOR
@@ -108,7 +108,7 @@ fun validationContentPlainSymbols(command: CommentCommand, processor: CommentPro
             contentType = CommentContentType.PLAIN,
         ),
         principal = CommentsPrincipalModel(
-            id = CommentUserId("123-234-abc-ABC"),
+            id = stub.userId,
             groups = setOf(
                 CommentsUserGroups.USER,
                 CommentsUserGroups.MODERATOR
@@ -138,7 +138,7 @@ fun validationBadContentType(command: CommentCommand, processor: CommentProcesso
             contentType = CommentContentType.NONE,
         ),
         principal = CommentsPrincipalModel(
-            id = CommentUserId("123-234-abc-ABC"),
+            id = stub.userId,
             groups = setOf(
                 CommentsUserGroups.USER,
                 CommentsUserGroups.MODERATOR

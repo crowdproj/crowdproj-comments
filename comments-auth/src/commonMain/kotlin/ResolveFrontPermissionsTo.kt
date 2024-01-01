@@ -22,9 +22,6 @@ private val accessTable = mapOf(
     CommentsUserPermissions.READ_OWN to mapOf(
         CommentsPrincipalRelations.OWN to CommentPermissionClient.READ
     ),
-    CommentsUserPermissions.READ_GROUP to mapOf(
-        CommentsPrincipalRelations.GROUP to CommentPermissionClient.READ
-    ),
     CommentsUserPermissions.READ_PUBLIC to mapOf(
         CommentsPrincipalRelations.PUBLIC to CommentPermissionClient.READ
     ),

@@ -25,5 +25,6 @@ data class CommentError(
         REQUEST("request"),
         REPOSITORY("repository"),
         ADMINISTRATION("administration"),
+        ACCESS("access"),
     }
 }

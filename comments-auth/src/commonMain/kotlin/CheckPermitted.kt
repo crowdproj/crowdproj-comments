@@ -32,7 +32,7 @@ private val accessTable = mapOf(
     AccessTableConditions(
         command = CommentCommand.CREATE,
         permission = CommentsUserPermissions.CREATE_OWN,
-        relation = CommentsPrincipalRelations.NEW,
+        relation = CommentsPrincipalRelations.OWN,
     ) to true,
 
     // Read

@@ -6,6 +6,7 @@ import com.crowdproj.comments.biz.general.prepareResponse
 import com.crowdproj.comments.biz.general.stub
 import com.crowdproj.comments.biz.permissions.accessValidation
 import com.crowdproj.comments.biz.permissions.chainPermissions
+import com.crowdproj.comments.biz.permissions.frontPermissions
 import com.crowdproj.comments.biz.permissions.searchTypes
 import com.crowdproj.comments.biz.validation.*
 import com.crowdproj.comments.biz.workers.*
@@ -65,6 +66,7 @@ class CommentProcessor(
                     accessValidation("Validate access rights")
                     repoCreate("Creating comment in repoProd")
                 }
+                frontPermissions("Вычисление пользовательских разрешений для фронтенда")
                 prepareResponse("Prepare response")
             }
             operation("Read comment", CommentCommand.READ) {
@@ -90,6 +92,7 @@ class CommentProcessor(
                     accessValidation("Validate access rights")
                     repoReadDone("Finish read comment")
                 }
+                frontPermissions("Вычисление пользовательских разрешений для фронтенда")
                 prepareResponse("Prepare response")
             }
             operation("Update comment", CommentCommand.UPDATE) {
@@ -129,6 +132,7 @@ class CommentProcessor(
                     repoPrepareUpdate("Preparing object to update")
                     repoUpdate("Updating comment in repoProd")
                 }
+                frontPermissions("Вычисление пользовательских разрешений для фронтенда")
                 prepareResponse("Prepare response")
             }
             operation("Delete comment", CommentCommand.DELETE) {
@@ -155,6 +159,7 @@ class CommentProcessor(
                     repoPrepareDelete("Preparing object to delete")
                     repoDelete("Deleting comment in repoProd")
                 }
+                frontPermissions("Вычисление пользовательских разрешений для фронтенда")
                 prepareResponse("Prepare response")
             }
             operation("Search comments", CommentCommand.SEARCH) {
@@ -183,6 +188,7 @@ class CommentProcessor(
                     searchTypes("Prepare search request")
                     repoSearch("Search comments in repoProd")
                 }
+                frontPermissions("Вычисление пользовательских разрешений для фронтенда")
                 prepareResponse("Prepare response")
             }
         }.build()
