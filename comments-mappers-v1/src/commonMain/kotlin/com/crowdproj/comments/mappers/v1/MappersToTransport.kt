@@ -21,7 +21,7 @@ fun CommentContext.toTransport(): IResponse = when (command) {
 private fun CommentContext.toTransportInit() = CommentInitResponse(
     requestId = this.requestId.asString().takeIf { it.isNotBlank() },
     result = if (errors.isEmpty()) ResponseResult.SUCCESS else ResponseResult.ERROR,
-    errors = errors.toTransportErrors()
+    errors = errors.toTransportErrors(),
 )
 
 private fun CommentContext.toTransportCreate() = CommentCreateResponse(
@@ -86,8 +86,23 @@ private fun Comment.toTransportComment() = CommentResponseObject(
     userId = userId.takeIf { it != CommentUserId.NONE }?.asString(),
     content = content.takeIf { it.isNotBlank() },
     contentType = contentType.toTransport(),
-    lock = lock.takeIf { it != CommentLock.NONE }?.asString()
+    lock = lock.takeIf { it != CommentLock.NONE }?.asString(),
+    permissions = permissionClient.toTransport()
 )
+
+private fun MutableSet<CommentPermissionClient>.toTransport(): Set<CommentPermissions>? = this
+    .map { it.toTransport() }
+    .toSet()
+    .takeIf { it.isNotEmpty() }
+
+private fun CommentPermissionClient.toTransport() = when (this) {
+    CommentPermissionClient.READ -> CommentPermissions.READ
+    CommentPermissionClient.UPDATE -> CommentPermissions.UPDATE
+    CommentPermissionClient.DELETE -> CommentPermissions.DELETE
+    CommentPermissionClient.MAKE_VISIBLE_PUBLIC -> CommentPermissions.MAKE_VISIBLE_PUBLIC
+    CommentPermissionClient.MAKE_VISIBLE_GROUP -> CommentPermissions.MAKE_VISIBLE_GROUP
+    CommentPermissionClient.MAKE_VISIBLE_OWNER -> CommentPermissions.MAKE_VISIBLE_OWN
+}
 
 private fun CommentObjectType.toTransport() = when (this) {
     CommentObjectType.COMMENT -> ObjectType.COMMENT

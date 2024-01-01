@@ -117,7 +117,7 @@ class CommentsStubWSTest {
         request: IRequest,
         crossinline assertBlock: (T) -> Unit
     ) = testApplication {
-        application { module(CommentsAppSettings(corSettings = CommentsCorSettings())) }
+        application { module(CommentsAppSettings(corSettings = CommentsCorSettings(authEnabled = false))) }
         val client = createClient {
             install(WebSockets)
         }

@@ -2,6 +2,8 @@ package com.crowdproj.comments.common
 
 import com.crowdproj.comments.common.config.CommentsCorSettings
 import com.crowdproj.comments.common.models.*
+import com.crowdproj.comments.common.permissions.CommentsPrincipalModel
+import com.crowdproj.comments.common.permissions.CommentsUserPermissions
 import com.crowdproj.comments.common.repo.ICommentsRepository
 import com.crowdproj.comments.common.stubs.CommentStubs
 import kotlinx.datetime.Instant
@@ -35,5 +37,9 @@ data class CommentContext(
     var commentsRepoDone: MutableList<Comment> = mutableListOf(),
 
     var commentResponse: Comment = Comment.NONE,
-    var commentsResponse: MutableList<Comment> = mutableListOf()
+    var commentsResponse: MutableList<Comment> = mutableListOf(),
+
+    var principal: CommentsPrincipalModel = CommentsPrincipalModel.NONE,
+    var permissionsChain: MutableSet<CommentsUserPermissions> = mutableSetOf(),
+    var permitted: Boolean = false,
 )

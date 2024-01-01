@@ -49,7 +49,7 @@ abstract class CommentsRepoApiTest {
 
     @Test
     fun create() = testApplication {
-        application { module(CommentsAppSettings(corSettings = CommentsCorSettings(repoTest = repo))) }
+        application { module(CommentsAppSettings(corSettings = CommentsCorSettings(repoTest = repo, authEnabled = false))) }
 
         val createComment = CommentCreateObject(
             objectType = ObjectType.AD,
@@ -107,7 +107,7 @@ abstract class CommentsRepoApiTest {
     @Test
     fun update() = testApplication {
         application {
-            module(CommentsAppSettings(corSettings = CommentsCorSettings(repoTest = repo)))
+            module(CommentsAppSettings(corSettings = CommentsCorSettings(repoTest = repo, authEnabled = false)))
         }
 
         val commentUpdate = CommentUpdateObject(
@@ -145,7 +145,7 @@ abstract class CommentsRepoApiTest {
     @Test
     fun delete() = testApplication {
         application {
-            module(CommentsAppSettings(corSettings = CommentsCorSettings(repoTest = repo)))
+            module(CommentsAppSettings(corSettings = CommentsCorSettings(repoTest = repo, authEnabled = false)))
         }
         val client = myClient()
 
@@ -167,7 +167,7 @@ abstract class CommentsRepoApiTest {
     @Test
     fun search() = testApplication {
         application {
-            module(CommentsAppSettings(corSettings = CommentsCorSettings(repoTest = repo)))
+            module(CommentsAppSettings(corSettings = CommentsCorSettings(repoTest = repo, authEnabled = false)))
         }
         val client = myClient()
 

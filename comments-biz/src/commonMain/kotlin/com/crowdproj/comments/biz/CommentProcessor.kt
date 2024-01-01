@@ -4,6 +4,9 @@ import com.crowdproj.comments.biz.general.initRepo
 import com.crowdproj.comments.biz.general.operation
 import com.crowdproj.comments.biz.general.prepareResponse
 import com.crowdproj.comments.biz.general.stub
+import com.crowdproj.comments.biz.permissions.accessValidation
+import com.crowdproj.comments.biz.permissions.chainPermissions
+import com.crowdproj.comments.biz.permissions.searchTypes
 import com.crowdproj.comments.biz.validation.*
 import com.crowdproj.comments.biz.workers.*
 import com.crowdproj.comments.biz.workers.stubs.*
@@ -24,13 +27,17 @@ class CommentProcessor(
         val BusinessChain = rootChain {
             initChain("Init business chain")
             initRepo("Init repo")
+            validation("Common validation") {
+                validatePrincipal("Validate client principals")
+            }
+            chainPermissions("Resolve chain permissions")
             operation("Create comment", CommentCommand.CREATE) {
                 stub("Stub processing") {
                     stubCreateSuccess("Simulating successful create processing")
                     stubDbError("Simulating db error")
                     stubNoCase("Error: wrong stub case")
                 }
-                validation {
+                validation("Validation create") {
                     worker("Copy fields to commentsValidating")
                     { commentValidating = commentRequest.deepCopy() }
                     worker("Cleaning id")
@@ -55,6 +62,7 @@ class CommentProcessor(
                 }
                 repository("Creating logic") {
                     repoPrepareCreate("Preparing to create")
+                    accessValidation("Validate access rights")
                     repoCreate("Creating comment in repoProd")
                 }
                 prepareResponse("Prepare response")
@@ -67,7 +75,7 @@ class CommentProcessor(
                     stubDbError("Simulating db error")
                     stubNoCase("Error: wrong stub case")
                 }
-                validation {
+                validation("Validation read") {
                     worker("Copy fields to commentsValidating")
                     { commentValidating = commentRequest.deepCopy() }
                     worker("Cleaning id")
@@ -79,6 +87,7 @@ class CommentProcessor(
                 }
                 repository("Read logic") {
                     repoRead("Reading comment from repoProd")
+                    accessValidation("Validate access rights")
                     repoReadDone("Finish read comment")
                 }
                 prepareResponse("Prepare response")
@@ -91,7 +100,7 @@ class CommentProcessor(
                     stubDbError("Simulating db error")
                     stubNoCase("Error: wrong stub case")
                 }
-                validation {
+                validation("Validation update") {
                     worker("Copy fields to commentsValidating")
                     { commentValidating = commentRequest.deepCopy() }
                     worker("Cleaning id")
@@ -116,6 +125,7 @@ class CommentProcessor(
                 }
                 repository("Update logic") {
                     repoRead("Reading comment from repoProd")
+                    accessValidation("Validate access rights")
                     repoPrepareUpdate("Preparing object to update")
                     repoUpdate("Updating comment in repoProd")
                 }
@@ -129,7 +139,7 @@ class CommentProcessor(
                     stubDbError("Simulating db error")
                     stubNoCase("Error: wrong stub case")
                 }
-                validation {
+                validation("Validation delete") {
                     worker("Copy fields to commentsValidating")
                     { commentValidating = commentRequest.deepCopy() }
                     worker("Cleaning id")
@@ -141,6 +151,7 @@ class CommentProcessor(
                 }
                 repository("Delete logic") {
                     repoRead("Reading comment from repoProd")
+                    accessValidation("Validate access rights")
                     repoPrepareDelete("Preparing object to delete")
                     repoDelete("Deleting comment in repoProd")
                 }
@@ -154,7 +165,7 @@ class CommentProcessor(
                     stubDbError("Simulating db error")
                     stubNoCase("Error: wrong stub case")
                 }
-                validation {
+                validation("Validation search") {
                     worker("Copy fields to commentsValidating")
                     { commentFilterValidating = commentFilterRequest.copy() }
                     worker("Clean object id")
@@ -169,6 +180,7 @@ class CommentProcessor(
                     finishCommentFilterValidation("Finish validation")
                 }
                 repository("Search logic") {
+                    searchTypes("Prepare search request")
                     repoSearch("Search comments in repoProd")
                 }
                 prepareResponse("Prepare response")

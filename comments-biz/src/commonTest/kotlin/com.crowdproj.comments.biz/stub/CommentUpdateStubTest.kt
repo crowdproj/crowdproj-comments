@@ -3,6 +3,8 @@ package com.crowdproj.comments.biz.stub
 import com.crowdproj.comments.biz.CommentProcessor
 import com.crowdproj.comments.common.CommentContext
 import com.crowdproj.comments.common.models.*
+import com.crowdproj.comments.common.permissions.CommentsPrincipalModel
+import com.crowdproj.comments.common.permissions.CommentsUserGroups
 import com.crowdproj.comments.common.stubs.CommentStubs
 import kotlinx.coroutines.test.runTest
 import kotlin.test.Test
@@ -34,6 +36,13 @@ class CommentUpdateStubTest {
                 content = content,
                 contentType = contentType,
             ),
+            principal = CommentsPrincipalModel(
+                id = CommentUserId("123-234-abc-ABC"),
+                groups = setOf(
+                    CommentsUserGroups.USER,
+                    CommentsUserGroups.MODERATOR
+                )
+            ),
         )
         processor.exec(ctx)
         assertEquals(id, ctx.commentResponse.id)
@@ -59,6 +68,13 @@ class CommentUpdateStubTest {
                 content = content,
                 contentType = contentType,
             ),
+            principal = CommentsPrincipalModel(
+                id = CommentUserId("123-234-abc-ABC"),
+                groups = setOf(
+                    CommentsUserGroups.USER,
+                    CommentsUserGroups.MODERATOR
+                )
+            ),
         )
         processor.exec(ctx)
         assertEquals(Comment(), ctx.commentResponse)
@@ -82,6 +98,13 @@ class CommentUpdateStubTest {
                 content = content,
                 contentType = contentType,
             ),
+            principal = CommentsPrincipalModel(
+                id = CommentUserId("123-234-abc-ABC"),
+                groups = setOf(
+                    CommentsUserGroups.USER,
+                    CommentsUserGroups.MODERATOR
+                )
+            ),
         )
         processor.exec(ctx)
         assertEquals(Comment(), ctx.commentResponse)
@@ -104,6 +127,13 @@ class CommentUpdateStubTest {
                 content = content,
                 contentType = contentType,
             ),
+            principal = CommentsPrincipalModel(
+                id = CommentUserId("123-234-abc-ABC"),
+                groups = setOf(
+                    CommentsUserGroups.USER,
+                    CommentsUserGroups.MODERATOR
+                )
+            ),
         )
         processor.exec(ctx)
         assertEquals(Comment(), ctx.commentResponse)
@@ -125,6 +155,13 @@ class CommentUpdateStubTest {
                 userId = userId,
                 content = content,
                 contentType = contentType,
+            ),
+            principal = CommentsPrincipalModel(
+                id = CommentUserId("123-234-abc-ABC"),
+                groups = setOf(
+                    CommentsUserGroups.USER,
+                    CommentsUserGroups.MODERATOR
+                )
             ),
         )
         processor.exec(ctx)

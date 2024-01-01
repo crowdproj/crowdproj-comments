@@ -1,6 +1,7 @@
 package com.crowdproj.comments.common.models
 
 import com.crowdproj.comments.common.NONE
+import com.crowdproj.comments.common.permissions.CommentsPrincipalRelations
 import kotlinx.datetime.Instant
 
 data class Comment(
@@ -13,6 +14,7 @@ data class Comment(
     var createdAt: Instant = Instant.NONE,
     var updatedAt: Instant = Instant.NONE,
     var lock: CommentLock = CommentLock.NONE,
+    var principalRelations: Set<CommentsPrincipalRelations> = emptySet(),
     var permissionClient: MutableSet<CommentPermissionClient> = mutableSetOf(),
 ) {
     fun deepCopy(): Comment = copy(

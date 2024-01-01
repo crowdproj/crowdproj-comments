@@ -170,7 +170,7 @@ tasks {
     val registryPass: String? = System.getenv("CONTAINER_REGISTRY_PASS")
     val registryHost: String? = System.getenv("CONTAINER_REGISTRY_HOST")
     val registryPref: String? = System.getenv("CONTAINER_REGISTRY_PREF")
-    val registryName: String? = System.getenv("CONTAINER_REGISTRY_NAME")
+    val registryName: String = System.getenv("CONTAINER_REGISTRY_NAME") ?: project.name
     val imageName = registryPref?.let { "$it/$registryName" } ?: registryName
 
     val dockerBuildX64Image by creating(DockerBuildImage::class) {

@@ -40,7 +40,7 @@ spec:
     spec:
       containers:
         - name: comments
-          image: stellalupus/crowdproj-comments
+          image: stellalupus/comments-app-ktor
           resources:
             requests:
               cpu: "100m"
@@ -96,6 +96,7 @@ spec:
   jwtRules:
     - issuer: "http://localhost:7080/realms/crowdproj"
       jwksUri: "http://keycloak.keycloak.svc.cluster.local:8080/realms/crowdproj/protocol/openid-connect/certs"
+      outputPayloadToHeader: jwt-parsed
 
 --- #AuthorizationPolicy
 apiVersion: security.istio.io/v1

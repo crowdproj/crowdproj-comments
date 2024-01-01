@@ -3,6 +3,8 @@ package com.crowdproj.comments.biz.validation
 import com.crowdproj.comments.biz.CommentProcessor
 import com.crowdproj.comments.common.CommentContext
 import com.crowdproj.comments.common.models.*
+import com.crowdproj.comments.common.permissions.CommentsPrincipalModel
+import com.crowdproj.comments.common.permissions.CommentsUserGroups
 import kotlinx.coroutines.test.runTest
 import kotlin.test.assertContains
 import kotlin.test.assertEquals
@@ -21,7 +23,14 @@ fun validationIdsCorrect(command: CommentCommand, processor: CommentProcessor, c
             userId = CommentUserId("123-234-abc-ABC"),
             content = "abc",
             contentType = CommentContentType.PLAIN,
-        )
+        ),
+        principal = CommentsPrincipalModel(
+            id = CommentUserId("123-234-abc-ABC"),
+            groups = setOf(
+                CommentsUserGroups.USER,
+                CommentsUserGroups.MODERATOR
+            )
+        ),
     )
     processor.exec(ctx)
     assertEquals(0, ctx.errors.size)
@@ -39,7 +48,14 @@ fun validationIdsTrim(command: CommentCommand, processor: CommentProcessor, comm
             userId = CommentUserId(" \n\t 123-234-abc-ABC \n\t "),
             content = "abc",
             contentType = CommentContentType.PLAIN,
-        )
+        ),
+        principal = CommentsPrincipalModel(
+            id = CommentUserId("123-234-abc-ABC"),
+            groups = setOf(
+                CommentsUserGroups.USER,
+                CommentsUserGroups.MODERATOR
+            )
+        ),
     )
     processor.exec(ctx)
     assertEquals(0, ctx.errors.size)
@@ -57,7 +73,14 @@ fun validationIdEmpty(command: CommentCommand, processor: CommentProcessor) = ru
             userId = CommentUserId("123-234-abc-ABC"),
             content = "abc",
             contentType = CommentContentType.PLAIN,
-        )
+        ),
+        principal = CommentsPrincipalModel(
+            id = CommentUserId("123-234-abc-ABC"),
+            groups = setOf(
+                CommentsUserGroups.USER,
+                CommentsUserGroups.MODERATOR
+            )
+        ),
     ).also { ctx ->
         processor.exec(ctx)
         assertEquals(1, ctx.errors.size)
@@ -81,7 +104,14 @@ fun validationIdNotEmpty(command: CommentCommand, processor: CommentProcessor) =
             userId = CommentUserId("123-234-abc-ABC"),
             content = "abc",
             contentType = CommentContentType.PLAIN,
-        )
+        ),
+        principal = CommentsPrincipalModel(
+            id = CommentUserId("123-234-abc-ABC"),
+            groups = setOf(
+                CommentsUserGroups.USER,
+                CommentsUserGroups.MODERATOR
+            )
+        ),
     ).also { ctx ->
         processor.exec(ctx)
         assertEquals(1, ctx.errors.size)
@@ -105,7 +135,14 @@ fun validationObjectIdNotEmpty(command: CommentCommand, processor: CommentProces
             userId = CommentUserId("123-234-abc-ABC"),
             content = "abc",
             contentType = CommentContentType.PLAIN,
-        )
+        ),
+        principal = CommentsPrincipalModel(
+            id = CommentUserId("123-234-abc-ABC"),
+            groups = setOf(
+                CommentsUserGroups.USER,
+                CommentsUserGroups.MODERATOR
+            )
+        ),
     ).also { ctx ->
         processor.exec(ctx)
         assertEquals(1, ctx.errors.size)
@@ -129,7 +166,14 @@ fun validationUserIdNotEmpty(command: CommentCommand, processor: CommentProcesso
             userId = CommentUserId(""),
             content = "abc",
             contentType = CommentContentType.PLAIN,
-        )
+        ),
+        principal = CommentsPrincipalModel(
+            id = CommentUserId("123-234-abc-ABC"),
+            groups = setOf(
+                CommentsUserGroups.USER,
+                CommentsUserGroups.MODERATOR
+            )
+        ),
     ).also { ctx ->
         processor.exec(ctx)
         assertEquals(1, ctx.errors.size)
@@ -153,7 +197,14 @@ fun validationBadIdFormat(command: CommentCommand, processor: CommentProcessor) 
             userId = CommentUserId("123-234-abc-ABC"),
             content = "abc",
             contentType = CommentContentType.PLAIN,
-        )
+        ),
+        principal = CommentsPrincipalModel(
+            id = CommentUserId("123-234-abc-ABC"),
+            groups = setOf(
+                CommentsUserGroups.USER,
+                CommentsUserGroups.MODERATOR
+            )
+        ),
     ).also { ctx ->
         processor.exec(ctx)
         assertEquals(1, ctx.errors.size)
@@ -177,7 +228,14 @@ fun validationBadObjectIdFormat(command: CommentCommand, processor: CommentProce
             userId = CommentUserId("123-234-abc-ABC"),
             content = "abc",
             contentType = CommentContentType.PLAIN,
-        )
+        ),
+        principal = CommentsPrincipalModel(
+            id = CommentUserId("123-234-abc-ABC"),
+            groups = setOf(
+                CommentsUserGroups.USER,
+                CommentsUserGroups.MODERATOR
+            )
+        ),
     ).also { ctx ->
         processor.exec(ctx)
         assertEquals(1, ctx.errors.size)
@@ -201,7 +259,14 @@ fun validationBadUserIdFormat(command: CommentCommand, processor: CommentProcess
             userId = CommentUserId("!@#\$%^&*(),.{}"),
             content = "abc",
             contentType = CommentContentType.PLAIN,
-        )
+        ),
+        principal = CommentsPrincipalModel(
+            id = CommentUserId("123-234-abc-ABC"),
+            groups = setOf(
+                CommentsUserGroups.USER,
+                CommentsUserGroups.MODERATOR
+            )
+        ),
     ).also { ctx ->
         processor.exec(ctx)
         assertEquals(1, ctx.errors.size)

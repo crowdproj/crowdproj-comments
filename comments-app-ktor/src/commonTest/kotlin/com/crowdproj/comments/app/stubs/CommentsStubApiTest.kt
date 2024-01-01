@@ -18,7 +18,7 @@ import kotlin.test.assertEquals
 class CommentsStubApiTest {
     @Test
     fun create() = testApplication {
-        application { module(CommentsAppSettings(corSettings = CommentsCorSettings())) }
+        application { module(CommentsAppSettings(corSettings = CommentsCorSettings(authEnabled = false))) }
         val client = myClient()
 
         val response = client.post("/v1/create") {
@@ -68,7 +68,7 @@ class CommentsStubApiTest {
 
     @Test
     fun update() = testApplication {
-        application { module(CommentsAppSettings(corSettings = CommentsCorSettings())) }
+        application { module(CommentsAppSettings(corSettings = CommentsCorSettings(authEnabled = false))) }
         val client = myClient()
 
         val response = client.post("/v1/update") {
@@ -95,7 +95,7 @@ class CommentsStubApiTest {
 
     @Test
     fun delete() = testApplication {
-        application { module(CommentsAppSettings(corSettings = CommentsCorSettings())) }
+        application { module(CommentsAppSettings(corSettings = CommentsCorSettings(authEnabled = false))) }
         val client = myClient()
 
         val response = client.post("/v1/delete") {
@@ -118,7 +118,7 @@ class CommentsStubApiTest {
 
     @Test
     fun search() = testApplication {
-        application { module(CommentsAppSettings(corSettings = CommentsCorSettings())) }
+        application { module(CommentsAppSettings(corSettings = CommentsCorSettings(authEnabled = false))) }
         val client = myClient()
 
         val response = client.post("/v1/search") {

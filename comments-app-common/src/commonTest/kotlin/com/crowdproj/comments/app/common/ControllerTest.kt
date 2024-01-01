@@ -25,8 +25,8 @@ class ControllerTest {
     )
 
     private val appSettings: ICommentsAppSettings = object : ICommentsAppSettings{
-        override val processor: CommentProcessor = CommentProcessor()
-        override val corSettings: CommentsCorSettings = CommentsCorSettings()
+        override val corSettings: CommentsCorSettings = CommentsCorSettings(authEnabled = false)
+        override val processor: CommentProcessor = CommentProcessor(settings = corSettings)
     }
 
     class TestApplicationCall(private val request: IRequest) {

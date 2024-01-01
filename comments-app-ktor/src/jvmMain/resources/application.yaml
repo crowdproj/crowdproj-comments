@@ -24,3 +24,5 @@ comments:
       pass: "$CASSANDRA_PASS:cassandra"
       keyspace: "$CASSANDRA_KEYSPACE:comments"
       testing: "$CASSANDRA_TESTING:false"
+  auth:
+    enabled: true

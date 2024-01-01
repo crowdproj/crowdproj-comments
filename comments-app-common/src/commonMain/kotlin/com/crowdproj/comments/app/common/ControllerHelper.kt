@@ -46,7 +46,7 @@ suspend inline fun <T> ICommentsAppSettings.controllerHelper(
     logId:String
 ): T {
     val ctx = CommentContext(
-        timeStarted = Clock.System.now()
+        timeStarted = Clock.System.now(),
     )
     return try {
         logger.doWithLogging(logId) {
