@@ -172,13 +172,14 @@ tasks {
     val registryPref: String? = System.getenv("CONTAINER_REGISTRY_PREF")
     val registryName: String = System.getenv("CONTAINER_REGISTRY_NAME") ?: project.name
     val imageName = registryPref?.let { "$it/$registryName" } ?: registryName
+    val nightly: Boolean = rootProject.version.toString().contains("SNAPSHOT")
 
     val dockerBuildX64Image by creating(DockerBuildImage::class) {
         group = "docker"
         dependsOn(dockerDockerfileX64)
         inputDir.set(dockerLinuxX64Dir.parentFile)
         images.add("$imageName:${rootProject.version}-x64")
-        images.add("$imageName:latest-x64")
+        images.add("$imageName:${if(nightly) "nightly" else "latest"}-x64")
         platform.set("linux/amd64")
     }
     val dockerPushX64Image by creating(DockerPushImage::class) {
@@ -196,7 +197,7 @@ tasks {
         dependsOn(dockerDockerfileArm64)
         inputDir.set(dockerLinuxArm64Dir.parentFile)
         images.add("$imageName:${rootProject.version}-arm64")
-        images.add("$imageName:latest-arm64")
+        images.add("$imageName:${if(nightly) "nightly" else "latest"}-arm64")
         platform.set("linux/arm64")
     }
     val dockerPushArm64Image by creating(DockerPushImage::class) {
@@ -271,7 +272,7 @@ tasks {
         dependsOn(dockerDockerfileJvm)
         inputDir.set(dockerJvmDir.parentFile)
         images.add("$imageName-jvm:${rootProject.version}")
-        images.add("$imageName-jvm:latest")
+        images.add("$imageName-jvm:${if(nightly) "nightly" else "latest"}")
     }
     val dockerPushJvmImage by creating(DockerPushImage::class) {
         group = "docker"
@@ -295,7 +296,7 @@ tasks {
         }
         executable("docker")
         println("Image name: $imageName")
-        args("buildx", "build", "--platform", "linux/amd64,linux/arm64", "-t", "$imageName:${rootProject.version}", "-t", "$imageName:latest","--push", ".")
+        args("buildx", "build", "--platform", "linux/amd64,linux/arm64", "-t", "$imageName:${rootProject.version}", "-t", "$imageName:${if(nightly) "nightly" else "latest"}","--push", ".")
     }
 
     create("deploy") {
