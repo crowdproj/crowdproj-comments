@@ -31,7 +31,7 @@ private val accessTable = mapOf(
         CommentsPrincipalRelations.OWN to CommentPermissionClient.UPDATE
     ),
     CommentsUserPermissions.UPDATE_PUBLIC to mapOf(
-        CommentsPrincipalRelations.MODERATABLE to CommentPermissionClient.UPDATE
+        CommentsPrincipalRelations.PUBLIC to CommentPermissionClient.UPDATE
     ),
 
     // DELETE
@@ -39,6 +39,6 @@ private val accessTable = mapOf(
         CommentsPrincipalRelations.OWN to CommentPermissionClient.DELETE
     ),
     CommentsUserPermissions.DELETE_PUBLIC to mapOf(
-        CommentsPrincipalRelations.MODERATABLE to CommentPermissionClient.DELETE
+        CommentsPrincipalRelations.PUBLIC to CommentPermissionClient.DELETE
     ),
 )
