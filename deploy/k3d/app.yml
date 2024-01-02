@@ -40,7 +40,7 @@ spec:
     spec:
       containers:
         - name: comments
-          image: stellalupus/comments-app-ktor
+          image: stellalupus/crowdproj-comments
           resources:
             requests:
               cpu: "100m"
