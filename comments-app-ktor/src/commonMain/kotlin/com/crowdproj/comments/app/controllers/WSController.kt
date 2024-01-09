@@ -26,13 +26,6 @@ private val cls: KFunction<*> = WebSocketServerSession::wsHandler
 suspend fun WebSocketServerSession.wsHandler(appSettings: CommentsAppSettings) {
     sessions += this
 
-    val logger = appSettings.corSettings.loggerProvider.logger(cls)
-
-    logger.info("Handling WS connection")
-    this.call.request.headers.forEach { h, s ->
-        logger.info("$h: $s")
-    }
-
     appSettings.controllerHelper(
         {
             this@wsHandler.call.request.headers["jwt-parsed"]?.let { jwtParsed ->
