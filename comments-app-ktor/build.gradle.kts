@@ -129,8 +129,10 @@ tasks {
     val dockerJvmDir = layout.buildDirectory.file("docker-jvm/Dockerfile").get().asFile
 
     val dockerDockerfileX64 by creating(Dockerfile::class) {
-        dependsOn(linkReleaseExecutableLinuxX64)
-        dependsOn(linuxX64ProcessResources)
+        dependsOn(
+            linkReleaseExecutableLinuxX64,
+            linuxX64ProcessResources
+        )
         group = "docker"
         destFile.set(dockerLinuxX64Dir)
         from(Dockerfile.From("ubuntu:23.04").withPlatform("linux/amd64"))
@@ -148,8 +150,10 @@ tasks {
         entryPoint("/app/${nativeFileX64.name}", "-config=./application.yaml")
     }
     val dockerDockerfileArm64 by creating(Dockerfile::class) {
-        dependsOn(linkReleaseExecutableLinuxArm64)
-        dependsOn(linuxArm64ProcessResources)
+        dependsOn(
+            linkReleaseExecutableLinuxArm64,
+            linuxArm64ProcessResources
+        )
         group = "docker"
         destFile.set(dockerLinuxArm64Dir)
         from(Dockerfile.From("ubuntu:23.04").withPlatform("linux/arm64"))
@@ -179,7 +183,7 @@ tasks {
         dependsOn(dockerDockerfileX64)
         inputDir.set(dockerLinuxX64Dir.parentFile)
         images.add("$imageName:${rootProject.version}-x64")
-        images.add("$imageName:${if(nightly) "nightly" else "latest"}-x64")
+        images.add("$imageName:${if (nightly) "nightly" else "latest"}-x64")
         platform.set("linux/amd64")
     }
     val dockerPushX64Image by creating(DockerPushImage::class) {
@@ -197,7 +201,7 @@ tasks {
         dependsOn(dockerDockerfileArm64)
         inputDir.set(dockerLinuxArm64Dir.parentFile)
         images.add("$imageName:${rootProject.version}-arm64")
-        images.add("$imageName:${if(nightly) "nightly" else "latest"}-arm64")
+        images.add("$imageName:${if (nightly) "nightly" else "latest"}-arm64")
         platform.set("linux/arm64")
     }
     val dockerPushArm64Image by creating(DockerPushImage::class) {
@@ -212,10 +216,13 @@ tasks {
     }
 
     val dockerDockerfileMultiplatform by creating(Dockerfile::class) {
-        dependsOn(linkReleaseExecutableLinuxArm64)
-        dependsOn(linuxArm64ProcessResources)
-        dependsOn(linkReleaseExecutableLinuxX64)
-        dependsOn(linuxX64ProcessResources)
+        dependsOn(
+            linkReleaseExecutableLinuxArm64,
+            linuxArm64ProcessResources,
+            linkReleaseExecutableLinuxX64,
+            linuxX64ProcessResources
+        )
+
         group = "docker"
         destFile.set(dockerLinuxMultiplatformDir)
 
@@ -244,9 +251,7 @@ tasks {
     }
 
     val dockerDockerfileJvm by creating(Dockerfile::class) {
-        dependsOn(buildFatJar)
-        dependsOn(shadowJar)
-        dependsOn(jvmProcessResources)
+        dependsOn(buildFatJar, shadowJar, jvmProcessResources)
         group = "docker"
         destFile.set(dockerJvmDir)
 
@@ -272,7 +277,7 @@ tasks {
         dependsOn(dockerDockerfileJvm)
         inputDir.set(dockerJvmDir.parentFile)
         images.add("$imageName-jvm:${rootProject.version}")
-        images.add("$imageName-jvm:${if(nightly) "nightly" else "latest"}")
+        images.add("$imageName-jvm:${if (nightly) "nightly" else "latest"}")
     }
     val dockerPushJvmImage by creating(DockerPushImage::class) {
         group = "docker"
@@ -288,21 +293,29 @@ tasks {
 
     val deployMultiplatform by creating(Exec::class) {
         group = "build"
-        dependsOn(dockerPushJvmImage)
-        dependsOn(dockerDockerfileMultiplatform)
+        dependsOn(dockerPushJvmImage, dockerDockerfileMultiplatform)
         workingDir(dockerDockerfileMultiplatform.destDir)
         workingDir.list()?.forEach {
             println(it)
         }
         executable("docker")
         println("Image name: $imageName")
-        args("buildx", "build", "--platform", "linux/amd64,linux/arm64", "-t", "$imageName:${rootProject.version}", "-t", "$imageName:${if(nightly) "nightly" else "latest"}","--push", ".")
+        args(
+            "buildx",
+            "build",
+            "--platform",
+            "linux/amd64,linux/arm64",
+            "-t",
+            "$imageName:${rootProject.version}",
+            "-t",
+            "$imageName:${if (nightly) "nightly" else "latest"}",
+            "--push",
+            "."
+        )
     }
 
     create("deploy") {
         group = "build"
-        dependsOn(dockerPushX64Image)
-        dependsOn(dockerPushArm64Image)
-        dependsOn(dockerPushJvmImage)
+        dependsOn(dockerPushX64Image, dockerPushArm64Image, dockerPushJvmImage)
     }
 }

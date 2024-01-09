@@ -18,5 +18,3 @@ comments:
       type: inmemory
     prod:
       type: inmemory
-  auth:
-    enabled: true

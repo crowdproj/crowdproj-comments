@@ -9,6 +9,7 @@ import com.crowdproj.comments.app.module
 import com.crowdproj.comments.common.config.CommentsCorSettings
 import io.ktor.client.plugins.websocket.*
 import io.ktor.server.testing.*
+import io.ktor.util.*
 import io.ktor.websocket.*
 import kotlinx.coroutines.withTimeout
 import kotlin.test.Test
@@ -117,13 +118,24 @@ class CommentsStubWSTest {
         request: IRequest,
         crossinline assertBlock: (T) -> Unit
     ) = testApplication {
-        application { module(CommentsAppSettings(corSettings = CommentsCorSettings(authEnabled = false))) }
+        application { module(CommentsAppSettings(corSettings = CommentsCorSettings())) }
         val client = createClient {
             install(WebSockets)
         }
 
-        client.webSocket("/v1/ws") {
+        val user = "user-123"
+        val groups = setOf("Users","Moderators")
+
+        val principalJson = "{\"sub\": \"$user\", \"groups\": [\"${groups.joinToString("\",\"")}\"]}"
+        val principalEncoded = principalJson.encodeBase64()
+
+        client.webSocketSession(
+            urlString = "/v1/ws"
+        ){
+            this.headers.append("jwt-parsed", principalEncoded)
+        }.run {
             withTimeout(3000) {
+
                 val income = incoming.receive() as Frame.Text
                 val response = income.readText().decodeResponse<CommentInitResponse>()
                 assertIs<CommentInitResponse>(response)

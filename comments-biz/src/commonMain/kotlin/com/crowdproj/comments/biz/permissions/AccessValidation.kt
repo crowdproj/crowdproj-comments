@@ -13,7 +13,7 @@ import com.crowdproj.kotlin.cor.handlers.worker
 fun CorChainDsl<CommentContext>.accessValidation(title: String) = chain {
     this.title = title
     description = "Resolve permissions by user groups and access table"
-    on { state == CommentState.RUNNING && settings.authEnabled }
+    on { state == CommentState.RUNNING }
     worker("Resolve principal relations") {
         commentRepoRead.principalRelations = commentRepoRead.resolveRelationsTo(principal)
     }

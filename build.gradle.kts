@@ -5,7 +5,7 @@ plugins {
 }
 
 group = "com.crowdproj.comments"
-version = System.getenv("PROJECT_VERSION") ?: "0.0.3-SNAPSHOT"
+version = System.getenv("PROJECT_VERSION") ?: "0.0.4-SNAPSHOT"
 
 repositories {
     mavenCentral()

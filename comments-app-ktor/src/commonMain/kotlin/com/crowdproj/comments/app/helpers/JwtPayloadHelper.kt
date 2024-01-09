@@ -16,9 +16,9 @@ fun CommentsPrincipalModel.Companion.fromJwtPayload(jwtPayload: String): Comment
     val jsonObject: JsonObject = Json.decodeFromString(payload)
     val id = jsonObject["sub"]?.jsonPrimitive?.content
 
-    val groups = jsonObject["groups"]?.jsonArray?.map { jsonElement ->
+    val groups = jsonObject["groups"]?.jsonArray?.mapNotNull { jsonElement ->
         jsonElement.jsonPrimitive.content.trim('/').groupFromTransport()
-    }?.filterNotNull()?.toSet()
+    }?.toSet()
 
     return CommentsPrincipalModel(
         id = id?.let { CommentUserId(it) } ?: CommentUserId.NONE,

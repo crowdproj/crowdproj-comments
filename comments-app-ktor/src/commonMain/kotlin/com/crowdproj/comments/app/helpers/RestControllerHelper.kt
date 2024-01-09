@@ -18,7 +18,7 @@ import io.ktor.utils.io.charsets.*
 import kotlin.io.encoding.ExperimentalEncodingApi
 import kotlin.reflect.KFunction
 
-@OptIn(ExperimentalEncodingApi::class)
+
 suspend inline fun <reified Rq : ICommentRequest, reified Rs : ICommentResponse> ApplicationCall.processV1(
     appSettings: CommentsAppSettings,
     cls: KFunction<*>,

@@ -8,7 +8,6 @@ data class CommentsCorSettings(
     val repoTest: ICommentsRepository = ICommentsRepository.NONE,
     val repoStub: ICommentsRepository = ICommentsRepository.NONE,
     val loggerProvider: CommentsLoggerProvider = CommentsLoggerProvider(),
-    val authEnabled: Boolean = true,
 ) {
     companion object {
         val NONE = CommentsCorSettings()

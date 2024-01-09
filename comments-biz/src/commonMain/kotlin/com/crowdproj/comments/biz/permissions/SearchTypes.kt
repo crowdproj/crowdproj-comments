@@ -11,7 +11,7 @@ import com.crowdproj.kotlin.cor.handlers.worker
 fun CorChainDsl<CommentContext>.searchTypes(title: String) = chain {
     this.title = title
     description = "Adding restricts to search request by access rights"
-    on { state == CommentState.RUNNING && settings.authEnabled }
+    on { state == CommentState.RUNNING }
     worker("Add restricts to search filter") {
         commentFilterValidated.searchPermissions = setOfNotNull(
             CommentSearchPermissions.OWN.takeIf { permissionsChain.contains(CommentsUserPermissions.SEARCH_OWN) },

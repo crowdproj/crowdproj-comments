@@ -3,6 +3,9 @@ package com.crowdproj.comments.app.common
 import com.crowdproj.comments.api.v1.models.*
 import com.crowdproj.comments.biz.CommentProcessor
 import com.crowdproj.comments.common.config.CommentsCorSettings
+import com.crowdproj.comments.common.models.CommentUserId
+import com.crowdproj.comments.common.permissions.CommentsPrincipalModel
+import com.crowdproj.comments.common.permissions.CommentsUserGroups
 import com.crowdproj.comments.mappers.v1.fromTransport
 import com.crowdproj.comments.mappers.v1.toTransport
 import kotlinx.coroutines.test.runTest
@@ -25,7 +28,7 @@ class ControllerTest {
     )
 
     private val appSettings: ICommentsAppSettings = object : ICommentsAppSettings{
-        override val corSettings: CommentsCorSettings = CommentsCorSettings(authEnabled = false)
+        override val corSettings: CommentsCorSettings = CommentsCorSettings()
         override val processor: CommentProcessor = CommentProcessor(settings = corSettings)
     }
 
@@ -41,7 +44,13 @@ class ControllerTest {
 
     private suspend fun TestApplicationCall.createCommentKtor(appSettings: ICommentsAppSettings) {
         val resp = appSettings.controllerHelper(
-            { fromTransport(receive<CommentCreateRequest>()) },
+            {
+                fromTransport(receive<CommentCreateRequest>())
+                this.principal = CommentsPrincipalModel(
+                    id = CommentUserId("2211"),
+                    groups = setOf(CommentsUserGroups.TEST)
+                )
+            },
             { toTransport() },
             this::class,
             "123"

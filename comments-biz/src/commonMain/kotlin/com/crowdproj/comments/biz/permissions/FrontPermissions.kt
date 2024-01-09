@@ -11,7 +11,7 @@ fun CorChainDsl<CommentContext>.frontPermissions(title: String) = worker {
     this.title = title
     description = "Resolving permissions for user front"
 
-    on { state == CommentState.RUNNING && settings.authEnabled}
+    on { state == CommentState.RUNNING }
 
     handle {
         commentRepoDone.permissionsClient.addAll(

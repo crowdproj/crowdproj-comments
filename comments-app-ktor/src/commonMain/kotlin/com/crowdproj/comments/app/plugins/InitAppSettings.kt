@@ -17,7 +17,6 @@ fun Application.initAppSettings(): CommentsAppSettings {
             repoTest = getDatabaseConf(CommentDbType.TEST),
             repoStub = CommentsRepoStub(),
             loggerProvider = getLoggerProviderConf(),
-            authEnabled = getAuthEnabled()
         )
     )
 }
