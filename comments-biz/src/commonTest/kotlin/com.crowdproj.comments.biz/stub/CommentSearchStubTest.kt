@@ -3,6 +3,8 @@ package com.crowdproj.comments.biz.stub
 import com.crowdproj.comments.biz.CommentProcessor
 import com.crowdproj.comments.common.CommentContext
 import com.crowdproj.comments.common.models.*
+import com.crowdproj.comments.common.permissions.CommentsPrincipalModel
+import com.crowdproj.comments.common.permissions.CommentsUserGroups
 import com.crowdproj.comments.common.stubs.CommentStubs
 import com.crowdproj.comments.stubs.CommentsStub
 import kotlinx.coroutines.test.runTest
@@ -28,7 +30,14 @@ class CommentSearchStubTest {
             state = CommentState.NONE,
             workMode = CommentWorkMode.STUB,
             stubCase = CommentStubs.SUCCESS,
-            commentFilterRequest = filter
+            commentFilterRequest = filter,
+            principal = CommentsPrincipalModel(
+                id = CommentUserId("123-234-abc-ABC"),
+                groups = setOf(
+                    CommentsUserGroups.USER,
+                    CommentsUserGroups.MODERATOR
+                )
+            ),
         )
         processor.exec(ctx)
         assertTrue(ctx.commentsResponse.size > 1)
@@ -59,7 +68,14 @@ class CommentSearchStubTest {
             state = CommentState.NONE,
             workMode = CommentWorkMode.STUB,
             stubCase = CommentStubs.BAD_ID,
-            commentFilterRequest = filter
+            commentFilterRequest = filter,
+            principal = CommentsPrincipalModel(
+                id = CommentUserId("123-234-abc-ABC"),
+                groups = setOf(
+                    CommentsUserGroups.USER,
+                    CommentsUserGroups.MODERATOR
+                )
+            ),
         )
         processor.exec(ctx)
         assertEquals(Comment(), ctx.commentResponse)
@@ -76,7 +92,14 @@ class CommentSearchStubTest {
             state = CommentState.NONE,
             workMode = CommentWorkMode.STUB,
             stubCase = CommentStubs.NOT_FOUND,
-            commentFilterRequest = filter
+            commentFilterRequest = filter,
+            principal = CommentsPrincipalModel(
+                id = CommentUserId("123-234-abc-ABC"),
+                groups = setOf(
+                    CommentsUserGroups.USER,
+                    CommentsUserGroups.MODERATOR
+                )
+            ),
         )
         processor.exec(ctx)
         assertEquals(Comment(), ctx.commentResponse)
@@ -92,7 +115,14 @@ class CommentSearchStubTest {
             state = CommentState.NONE,
             workMode = CommentWorkMode.STUB,
             stubCase = CommentStubs.DB_ERROR,
-            commentFilterRequest = filter
+            commentFilterRequest = filter,
+            principal = CommentsPrincipalModel(
+                id = CommentUserId("123-234-abc-ABC"),
+                groups = setOf(
+                    CommentsUserGroups.USER,
+                    CommentsUserGroups.MODERATOR
+                )
+            ),
         )
         processor.exec(ctx)
         assertEquals(Comment(), ctx.commentResponse)
@@ -109,6 +139,13 @@ class CommentSearchStubTest {
             workMode = CommentWorkMode.STUB,
             stubCase = CommentStubs.NONE,
             commentFilterRequest = filter,
+            principal = CommentsPrincipalModel(
+                id = CommentUserId("123-234-abc-ABC"),
+                groups = setOf(
+                    CommentsUserGroups.USER,
+                    CommentsUserGroups.MODERATOR
+                )
+            ),
         )
         processor.exec(ctx)
         assertEquals(Comment(), ctx.commentResponse)

@@ -28,6 +28,7 @@ fun Application.configureRouting(appSettings: CommentsAppSettings) {
                 call.searchComment(appSettings)
             }
             webSocket("ws") {
+                //this.call.request.headers.
                 wsHandler(appSettings)
             }
         }

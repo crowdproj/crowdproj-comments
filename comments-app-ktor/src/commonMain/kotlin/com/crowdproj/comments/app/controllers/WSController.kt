@@ -4,10 +4,14 @@ import com.crowdproj.comments.api.v1.decodeRequest
 import com.crowdproj.comments.api.v1.encode
 import com.crowdproj.comments.app.common.controllerHelper
 import com.crowdproj.comments.app.configs.CommentsAppSettings
+import com.crowdproj.comments.app.helpers.fromJwtPayload
 import com.crowdproj.comments.common.helpers.isUpdatableCommand
 import com.crowdproj.comments.common.models.CommentCommand
+import com.crowdproj.comments.common.permissions.CommentsPrincipalModel
 import com.crowdproj.comments.mappers.v1.fromTransport
 import com.crowdproj.comments.mappers.v1.toTransport
+import io.ktor.server.application.*
+import io.ktor.server.websocket.*
 import io.ktor.websocket.*
 import kotlinx.coroutines.channels.ClosedReceiveChannelException
 import kotlinx.coroutines.flow.collect
@@ -16,14 +20,19 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.isActive
 import kotlin.reflect.KFunction
 
-val sessions = mutableSetOf<WebSocketSession>()
+val sessions = mutableSetOf<WebSocketServerSession>()
 
-private val cls: KFunction<*> = WebSocketSession::wsHandler
-suspend fun WebSocketSession.wsHandler(appSettings: CommentsAppSettings) {
+private val cls: KFunction<*> = WebSocketServerSession::wsHandler
+suspend fun WebSocketServerSession.wsHandler(appSettings: CommentsAppSettings) {
     sessions += this
 
     appSettings.controllerHelper(
-        { command = CommentCommand.INIT },
+        {
+            this@wsHandler.call.request.headers["jwt-parsed"]?.let { jwtParsed ->
+                this.principal = CommentsPrincipalModel.fromJwtPayload(jwtParsed)
+            }
+            command = CommentCommand.INIT
+        },
         { outgoing.send(Frame.Text(toTransport().encode())) },
         cls,
         "wsHandler-init"
@@ -34,7 +43,12 @@ suspend fun WebSocketSession.wsHandler(appSettings: CommentsAppSettings) {
 
         try {
             appSettings.controllerHelper(
-                { fromTransport(frame.readText().decodeRequest()) },
+                {
+                    this@wsHandler.call.request.headers["jwt-parsed"]?.let { jwtParsed ->
+                        this.principal = CommentsPrincipalModel.fromJwtPayload(jwtParsed)
+                    }
+                    fromTransport(frame.readText().decodeRequest())
+                },
                 {
                     val result = Frame.Text(toTransport().encode())
                     if (isUpdatableCommand()) {

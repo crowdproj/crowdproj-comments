@@ -16,7 +16,7 @@ fun Application.initAppSettings(): CommentsAppSettings {
             repoProd = getDatabaseConf(CommentDbType.PROD),
             repoTest = getDatabaseConf(CommentDbType.TEST),
             repoStub = CommentsRepoStub(),
-            loggerProvider = getLoggerProviderConf()
+            loggerProvider = getLoggerProviderConf(),
         )
     )
 }

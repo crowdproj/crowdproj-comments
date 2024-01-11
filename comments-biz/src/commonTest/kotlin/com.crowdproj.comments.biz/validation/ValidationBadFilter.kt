@@ -3,6 +3,8 @@ package com.crowdproj.comments.biz.validation
 import com.crowdproj.comments.biz.CommentProcessor
 import com.crowdproj.comments.common.CommentContext
 import com.crowdproj.comments.common.models.*
+import com.crowdproj.comments.common.permissions.CommentsPrincipalModel
+import com.crowdproj.comments.common.permissions.CommentsUserGroups
 import kotlinx.coroutines.test.runTest
 import kotlin.test.assertContains
 import kotlin.test.assertEquals
@@ -17,7 +19,14 @@ fun validationFilterCorrect(command: CommentCommand, processor: CommentProcessor
             objectType = CommentObjectType.PRODUCT,
             objectId = CommentObjectId("123-234-abc-ABC"),
             userId = CommentUserId("123-234-abc-ABC"),
-        )
+        ),
+        principal = CommentsPrincipalModel(
+            id = CommentUserId("123-234-abc-ABC"),
+            groups = setOf(
+                CommentsUserGroups.USER,
+                CommentsUserGroups.MODERATOR
+            )
+        ),
     )
     processor.exec(ctx)
     assertEquals(0, ctx.errors.size)
@@ -33,7 +42,14 @@ fun validationFilterIdsTrim(command: CommentCommand, processor: CommentProcessor
             objectType = CommentObjectType.PRODUCT,
             objectId = CommentObjectId(" \n\t 123-234-abc-ABC \n\t "),
             userId = CommentUserId(" \n\t 123-234-abc-ABC \n\t "),
-        )
+        ),
+        principal = CommentsPrincipalModel(
+            id = CommentUserId("123-234-abc-ABC"),
+            groups = setOf(
+                CommentsUserGroups.USER,
+                CommentsUserGroups.MODERATOR
+            )
+        ),
     )
     processor.exec(ctx)
     assertEquals(0, ctx.errors.size)
@@ -49,7 +65,14 @@ fun validationFilterBadObjectType(command: CommentCommand, processor: CommentPro
             objectType = CommentObjectType.NONE,
             objectId = CommentObjectId("123-234-abc-ABC"),
             userId = CommentUserId("123-234-abc-ABC"),
-        )
+        ),
+        principal = CommentsPrincipalModel(
+            id = CommentUserId("123-234-abc-ABC"),
+            groups = setOf(
+                CommentsUserGroups.USER,
+                CommentsUserGroups.MODERATOR
+            )
+        ),
     )
     processor.exec(ctx)
     assertEquals(1, ctx.errors.size)
@@ -70,7 +93,14 @@ fun validationFilterNotEmpty(command: CommentCommand, processor: CommentProcesso
             objectType = CommentObjectType.NONE,
             objectId = CommentObjectId(""),
             userId = CommentUserId(""),
-        )
+        ),
+        principal = CommentsPrincipalModel(
+            id = CommentUserId("123-234-abc-ABC"),
+            groups = setOf(
+                CommentsUserGroups.USER,
+                CommentsUserGroups.MODERATOR
+            )
+        ),
     )
     processor.exec(ctx)
     assertEquals(2, ctx.errors.size)
@@ -96,7 +126,14 @@ fun validationFilterBadIdsFormat(command: CommentCommand, processor: CommentProc
             objectType = CommentObjectType.PRODUCT,
             objectId = CommentObjectId("!@#\$%^&*(),.{}"),
             userId = CommentUserId("123-234-abc-ABC"),
-        )
+        ),
+        principal = CommentsPrincipalModel(
+            id = CommentUserId("123-234-abc-ABC"),
+            groups = setOf(
+                CommentsUserGroups.USER,
+                CommentsUserGroups.MODERATOR
+            )
+        ),
     ).also { ctx ->
         processor.exec(ctx)
         assertEquals(1, ctx.errors.size)
@@ -116,7 +153,14 @@ fun validationFilterBadIdsFormat(command: CommentCommand, processor: CommentProc
             objectType = CommentObjectType.PRODUCT,
             objectId = CommentObjectId("123-234-abc-ABC"),
             userId = CommentUserId("!@#\$%^&*(),.{}"),
-        )
+        ),
+        principal = CommentsPrincipalModel(
+            id = CommentUserId("123-234-abc-ABC"),
+            groups = setOf(
+                CommentsUserGroups.USER,
+                CommentsUserGroups.MODERATOR
+            )
+        ),
     ).also { ctx ->
         processor.exec(ctx)
         assertEquals(1, ctx.errors.size)

@@ -17,6 +17,7 @@ kotlin {
 
                 implementation(project(":comments-common"))
                 implementation(project(":comments-stubs"))
+                implementation(project(":comments-auth"))
                 implementation(libs.crowdproj.cor)
             }
         }

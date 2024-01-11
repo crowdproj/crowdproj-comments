@@ -56,5 +56,5 @@ fun Comment.toLog() = CommentLog(
     objectId = objectId.takeIf { it != CommentObjectId.NONE }?.asString(),
     userId = userId.takeIf { it != CommentUserId.NONE }?.asString(),
     contentType = contentType.takeIf { it != CommentContentType.NONE }?.name,
-    permissions = permissionClient.takeIf { it.isNotEmpty() }?.filter { it.name.isNotBlank() }?.map { it.name }?.toSet()
+    permissions = permissionsClient.takeIf { it.isNotEmpty() }?.filter { it.name.isNotBlank() }?.map { it.name }?.toSet()
 )

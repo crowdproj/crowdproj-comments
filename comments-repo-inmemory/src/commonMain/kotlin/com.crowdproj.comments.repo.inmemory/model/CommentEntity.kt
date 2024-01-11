@@ -26,7 +26,7 @@ data class CommentEntity(
         createdAt = model.createdAt.takeIf { it != Instant.NONE }?.toString(),
         updatedAt = model.updatedAt.takeIf { it != Instant.NONE }?.toString(),
         lock = model.lock.takeIf { it != CommentLock.NONE }?.asString(),
-        permissionsClient = model.permissionClient.takeIf { it.isNotEmpty() }?.joinToString(";")
+        permissionsClient = model.permissionsClient.takeIf { it.isNotEmpty() }?.joinToString(";")
     )
 
     fun toInternal() = Comment(
@@ -39,6 +39,6 @@ data class CommentEntity(
         createdAt = createdAt?.let { Instant.parse(it) } ?: Instant.NONE,
         updatedAt = updatedAt?.let { Instant.parse(it) } ?: Instant.NONE,
         lock = lock?.let { CommentLock(it) } ?: CommentLock.NONE,
-        permissionClient = permissionsClient?.split(";")?.map { CommentPermissionClient.valueOf(it) }?.toMutableSet() ?: mutableSetOf()
+        permissionsClient = permissionsClient?.split(";")?.map { CommentPermissionClient.valueOf(it) }?.toMutableSet() ?: mutableSetOf()
     )
 }

@@ -5,6 +5,7 @@ import com.crowdproj.comments.api.v1.models.ICommentResponse
 import com.crowdproj.comments.app.common.controllerHelper
 import com.crowdproj.comments.app.configs.CommentsAppSettings
 import com.crowdproj.comments.common.models.CommentRequestId
+import com.crowdproj.comments.common.permissions.CommentsPrincipalModel
 import com.crowdproj.comments.mappers.v1.fromTransport
 import com.crowdproj.comments.mappers.v1.toTransport
 import io.ktor.http.*
@@ -14,7 +15,9 @@ import io.ktor.server.plugins.contentnegotiation.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.utils.io.charsets.*
+import kotlin.io.encoding.ExperimentalEncodingApi
 import kotlin.reflect.KFunction
+
 
 suspend inline fun <reified Rq : ICommentRequest, reified Rs : ICommentResponse> ApplicationCall.processV1(
     appSettings: CommentsAppSettings,
@@ -26,12 +29,18 @@ suspend inline fun <reified Rq : ICommentRequest, reified Rs : ICommentResponse>
     val logger = application.log
     suitableCharset(Charsets.UTF_8)
     defaultTextContentType(ContentType.Application.Json.withCharset(Charsets.UTF_8))
+    this.request.headers.forEach { header, list ->
+        logger.info("Header $header: $list")
+    }
+    val jwtParsed = this.request.headers["jwt-parsed"]
 
     logger.info("Started $endpoint request $requestId")
     try {
         appSettings.controllerHelper(
             {
                 this.requestId = requestId?.let { CommentRequestId(it) } ?: CommentRequestId.NONE
+                this.principal =
+                    jwtParsed?.let { CommentsPrincipalModel.fromJwtPayload(it) } ?: CommentsPrincipalModel.NONE
                 fromTransport(receive<Rq>())
             },
             {
@@ -46,3 +55,4 @@ suspend inline fun <reified Rq : ICommentRequest, reified Rs : ICommentResponse>
         )
     }
 }
+
