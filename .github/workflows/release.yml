@@ -41,7 +41,7 @@ jobs:
           password: ${{ secrets.CONTAINER_REGISTRY_PASS }}
 
       - name: Publish app
-        run: ./gradlew --stacktrace deployMultiplatform
+        run: ./gradlew --stacktrace deploy
         env:
           CONTAINER_REGISTRY_PREF: ${{ vars.CONTAINER_REGISTRY_PREF }}
           CONTAINER_REGISTRY_NAME: ${{ vars.CONTAINER_REGISTRY_NAME }}

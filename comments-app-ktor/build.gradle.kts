@@ -125,7 +125,6 @@ tasks {
     val jvmProcessResources by getting(ProcessResources::class)
     val dockerLinuxX64Dir = layout.buildDirectory.file("docker-x64/Dockerfile").get().asFile
     val dockerLinuxArm64Dir = layout.buildDirectory.file("docker-arm64/Dockerfile").get().asFile
-    val dockerLinuxMultiplatformDir = layout.buildDirectory.file("docker-multiplatform/Dockerfile").get().asFile
     val dockerJvmDir = layout.buildDirectory.file("docker-jvm/Dockerfile").get().asFile
 
     val dockerDockerfileX64 by creating(Dockerfile::class) {
@@ -215,41 +214,6 @@ tasks {
         }
     }
 
-    val dockerDockerfileMultiplatform by creating(Dockerfile::class) {
-        dependsOn(
-            linkReleaseExecutableLinuxArm64,
-            linuxArm64ProcessResources,
-            linkReleaseExecutableLinuxX64,
-            linuxX64ProcessResources
-        )
-
-        group = "docker"
-        destFile.set(dockerLinuxMultiplatformDir)
-
-        //arm64
-        doFirst {
-            copy {
-                from(nativeFileArm64)
-                from(linuxArm64ProcessResources.destinationDir)
-                into("${this@creating.destDir.get()}/linux/arm64")
-            }
-        }
-        doFirst {
-            copy {
-                from(nativeFileX64)
-                from(linuxX64ProcessResources.destinationDir)
-                into("${this@creating.destDir.get()}/linux/amd64")
-            }
-        }
-        from(Dockerfile.From("ubuntu:23.04").withPlatform("\$TARGETPLATFORM"))
-        arg("TARGETPLATFORM")
-        copyFile("\${TARGETPLATFORM}/${nativeFileArm64.name}", "/app/")
-        copyFile("\${TARGETPLATFORM}/application.yaml", "/app/")
-        exposePort(8080)
-        workingDir("/app")
-        entryPoint("/app/${nativeFileArm64.name}", "-config=./application.yaml")
-    }
-
     val dockerDockerfileJvm by creating(Dockerfile::class) {
         dependsOn(buildFatJar, shadowJar, jvmProcessResources)
         group = "docker"
@@ -290,29 +254,6 @@ tasks {
         }
     }
 
-
-    val deployMultiplatform by creating(Exec::class) {
-        group = "build"
-        dependsOn(dockerPushJvmImage, dockerDockerfileMultiplatform)
-        workingDir(dockerDockerfileMultiplatform.destDir)
-        workingDir.list()?.forEach {
-            println(it)
-        }
-        executable("docker")
-        println("Image name: $imageName")
-        args(
-            "buildx",
-            "build",
-            "--platform",
-            "linux/amd64,linux/arm64",
-            "-t",
-            "$imageName:${rootProject.version}",
-            "-t",
-            "$imageName:${if (nightly) "nightly" else "latest"}",
-            "--push",
-            "."
-        )
-    }
 
     create("deploy") {
         group = "build"
