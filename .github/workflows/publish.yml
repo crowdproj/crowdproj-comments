@@ -41,5 +41,4 @@ jobs:
           CONTAINER_REGISTRY_USER: ${{ secrets.CONTAINER_REGISTRY_USER }}
           CONTAINER_REGISTRY_HOST: ${{ vars.CONTAINER_REGISTRY_HOST }}
           CONTAINER_REGISTRY_PREF: ${{ vars.CONTAINER_REGISTRY_PREF }}
-          CONTAINER_REGISTRY_NAME: ${{ vars.CONTAINER_REGISTRY_NAME }}
           PROJECT_VERSION: ${{ github.event.release.tag_name }}
