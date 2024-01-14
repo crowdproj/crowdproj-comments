@@ -240,8 +240,8 @@ tasks {
         group = "docker"
         dependsOn(dockerDockerfileJvm)
         inputDir.set(dockerJvmDir.parentFile)
-        images.add("$imageName-jvm:${rootProject.version}")
-        images.add("$imageName-jvm:${if (nightly) "nightly" else "latest"}")
+        images.add("$imageName:${rootProject.version}-jvm")
+        images.add("$imageName-jvm:${if (nightly) "nightly" else "latest"}-jvm")
     }
     val dockerPushJvmImage by creating(DockerPushImage::class) {
         group = "docker"
